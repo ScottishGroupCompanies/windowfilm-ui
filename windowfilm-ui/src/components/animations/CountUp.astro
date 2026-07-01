@@ -1,0 +1,52 @@
+---
+// CountUp.astro
+// Number that counts up when it scrolls into view (from the Stats Bar).
+// Vanilla JS + IntersectionObserver, no libraries.
+//
+// ✅ BUG FIX: the production version read `data-count` but the HTML emitted
+// `data-count-end`, so the counter never fired. This version uses matching
+// attributes (`data-count-end` / `data-count-suffix`) consistently.
+//
+// HOW TO USE:
+//   <CountUp end={2400} suffix="+" label="Projects completed" />
+//   Drop several inside a row; they all fire together on scroll.
+
+interface Props {
+  end: number;
+  suffix?: string;
+  label?: string;
+}
+const { end, suffix = '', label = '' } = Astro.props;
+---
+
+<div class="countup text-center">
+  <span
+    class="countup__num block font-display text-4xl font-bold text-brand-light sm:text-5xl"
+    data-count-end={end}
+    data-count-suffix={suffix}
+  >0{suffix}</span>
+  {label && <span class="countup__label mt-1 block text-sm text-white/60">{label}</span>}
+</div>
+
+<script>
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.querySelectorAll<HTMLElement>('[data-count-end]').forEach((el) => {
+        const target = parseInt(el.dataset.countEnd || '0', 10);
+        const suffix = el.dataset.countSuffix || '';
+        let current = 0;
+        const step = target / 60;
+        const timer = setInterval(() => {
+          current = Math.min(current + step, target);
+          el.textContent = Math.round(current) + suffix;
+          if (current >= target) clearInterval(timer);
+        }, 30);
+      });
+      statsObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.3 });
+
+  // Observe each countup (or a shared wrapper if you group them)
+  document.querySelectorAll('.countup').forEach((el) => statsObserver.observe(el));
+</script>

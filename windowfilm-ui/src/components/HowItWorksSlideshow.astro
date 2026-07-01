@@ -1,0 +1,134 @@
+---
+// HowItWorksSlideshow.astro
+// Auto-play horizontal slideshow (5s/slide) with a progress bar, clickable
+// side nav, per-slide staggered content, and a glassmorphism FAQ accordion.
+// Vanilla JS, no libraries.
+//
+// HOW TO USE:
+//   <HowItWorksSlideshow slides={[{ step, title, desc, img, faq: [{q,a}] }, ...]} />
+//   Replace with your real steps & images. FAQ is optional per slide.
+
+interface Faq { q: string; a: string; }
+interface Slide { step: string; title: string; desc: string; img: string; faq?: Faq[]; }
+interface Props { slides?: Slide[]; }
+
+const {
+  slides = [
+    { step: '01', title: 'Free consultation', desc: 'We assess your glass, goals, and space — then recommend the right film.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/f_auto,q_auto,w_1920/https://d8j0ntlcm91z4.cloudfront.net/hf_20260617_213616_509bcc09.png', faq: [{ q: 'Is the quote really free?', a: 'Yes — no obligation, no pressure.' }] },
+    { step: '02', title: 'Choose your film', desc: 'Solar, security, privacy, or decorative — we match film to your needs.', img: 'https://res.cloudinary.com/deunehrew/image/upload/f_auto,q_auto,w_1920/v1781633639/hf_20260616_180915_3906a1d8.png', faq: [{ q: 'How many options are there?', a: 'Dozens, across all major brands.' }] },
+    { step: '03', title: 'Professional install', desc: 'Certified installers apply your film cleanly and precisely.', img: '/images/how-it-works-installation.png', faq: [{ q: 'How long does it take?', a: 'Most homes are done in a day.' }] },
+    { step: '04', title: 'Enjoy & warranty', desc: 'Enjoy the comfort and savings — backed by a manufacturer warranty.', img: 'https://res.cloudinary.com/deunehrew/image/upload/f_auto,q_auto,w_1920/v1781633582/hf_20260616_180939_e45884d8.png', faq: [{ q: 'What does the warranty cover?', a: 'Peeling, bubbling, and discoloration.' }] },
+  ],
+} = Astro.props;
+---
+
+<section class="hiw-slideshow bg-slate py-16">
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="grid gap-8 lg:grid-cols-[200px_1fr]">
+      <!-- side nav -->
+      <nav class="hidden flex-col gap-1 lg:flex">
+        {slides.map((s, i) => (
+          <button class={`hiw-slideshow__nav-item flex items-center gap-3 py-2 text-left ${i === 0 ? 'hiw-slideshow__nav-item--active' : ''}`} data-index={i}>
+            <span class="hiw-slideshow__nav-line block w-0.5 bg-white/15"></span>
+            <span class="text-sm text-white/70">{s.step} · {s.title}</span>
+          </button>
+        ))}
+      </nav>
+
+      <!-- viewport -->
+      <div class="overflow-hidden rounded-2xl">
+        <div class="hiw-slideshow__track flex">
+          {slides.map((s) => (
+            <div class="hiw-slideshow__slide w-full shrink-0">
+              <div class="grid gap-0 md:grid-cols-2">
+                <img src={s.img} alt={s.title} class="h-64 w-full object-cover md:h-full" loading="lazy" />
+                <div class="bg-ink p-8">
+                  <span class="hiw-slideshow__step font-mono text-sm text-brand-light">{s.step}</span>
+                  <h3 class="hiw-slideshow__title mt-2 font-display text-2xl font-bold text-white">{s.title}</h3>
+                  <p class="hiw-slideshow__desc mt-3 text-white/70">{s.desc}</p>
+                  {s.faq && (
+                    <div class="hiw-slideshow__faq mt-5 space-y-2">
+                      {s.faq.map((f) => (
+                        <div class="rounded-lg border border-white/10">
+                          <button class="hiw-slideshow__faq-q flex w-full items-center justify-between rounded-lg bg-white/5 px-4 py-3 text-left text-sm text-white" aria-expanded="false">
+                            <span>{f.q}</span>
+                            <span class="hiw-slideshow__faq-icon text-brand-light">+</span>
+                          </button>
+                          <div class="hiw-slideshow__faq-a hidden px-4 py-3 text-sm text-white/60">{f.a}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <a href="/contact/" class="hiw-slideshow__cta mt-5 inline-block rounded-full bg-brand px-6 py-2.5 font-semibold text-white transition hover:bg-brand-dark">Get a free quote</a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <!-- progress bar -->
+        <div class="h-1 bg-white/10"><div class="hiw-slideshow__progress-bar h-full bg-brand-light" style="width:0"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hiw-slideshow__track { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .hiw-slideshow__slide.is-active .hiw-slideshow__step  { animation: fadeInUp 0.4s ease 0.2s forwards; opacity: 0; }
+  .hiw-slideshow__slide.is-active .hiw-slideshow__title { animation: fadeInUp 0.4s ease 0.3s forwards; opacity: 0; }
+  .hiw-slideshow__slide.is-active .hiw-slideshow__desc  { animation: fadeInUp 0.4s ease 0.4s forwards; opacity: 0; }
+  .hiw-slideshow__slide.is-active .hiw-slideshow__faq   { animation: fadeInUp 0.4s ease 0.5s forwards; opacity: 0; }
+  .hiw-slideshow__slide.is-active .hiw-slideshow__cta   { animation: fadeInUp 0.4s ease 0.6s forwards; opacity: 0; }
+
+  .hiw-slideshow__progress-bar { transition: width 5s linear; }
+
+  .hiw-slideshow__nav-item--active .hiw-slideshow__nav-line { background: #7CB342; height: 48px; transition: background 0.3s, height 0.3s; }
+  .hiw-slideshow__nav-line { height: 20px; transition: background 0.3s, height 0.3s; }
+
+  .hiw-slideshow__faq-q { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .hiw-slideshow__faq-icon { transition: transform 0.3s ease; }
+  .hiw-slideshow__faq-q[aria-expanded="true"] .hiw-slideshow__faq-icon { transform: rotate(45deg); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hiw-slideshow__track { transition: none; }
+    .hiw-slideshow__slide.is-active * { animation: none !important; opacity: 1 !important; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.hiw-slideshow');
+  if (root) {
+    const track = root.querySelector<HTMLElement>('.hiw-slideshow__track')!;
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('.hiw-slideshow__slide'));
+    const navItems = Array.from(root.querySelectorAll<HTMLElement>('.hiw-slideshow__nav-item'));
+    const bar = root.querySelector<HTMLElement>('.hiw-slideshow__progress-bar')!;
+    let index = 0;
+    let timer: ReturnType<typeof setInterval>;
+
+    function go(i: number) {
+      index = (i + slides.length) % slides.length;
+      track.style.transform = `translateX(-${index * 100}%)`;
+      slides.forEach((s, n) => s.classList.toggle('is-active', n === index));
+      navItems.forEach((n, m) => n.classList.toggle('hiw-slideshow__nav-item--active', m === index));
+      // reset progress bar
+      bar.style.transition = 'none'; bar.style.width = '0';
+      requestAnimationFrame(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; });
+    }
+    function start() { clearInterval(timer); timer = setInterval(() => go(index + 1), 5000); }
+
+    navItems.forEach((n) => n.addEventListener('click', () => { go(Number(n.dataset.index)); start(); }));
+
+    // FAQ accordion
+    root.querySelectorAll<HTMLElement>('.hiw-slideshow__faq-q').forEach((q) => {
+      q.addEventListener('click', () => {
+        const open = q.getAttribute('aria-expanded') === 'true';
+        q.setAttribute('aria-expanded', String(!open));
+        (q.nextElementSibling as HTMLElement)?.classList.toggle('hidden', open);
+      });
+    });
+
+    go(0); start();
+  }
+</script>

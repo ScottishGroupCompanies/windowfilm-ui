@@ -1,0 +1,35 @@
+---
+// CatalogLayout.astro — base structure of the catalog page.
+interface Props { title?: string; }
+const { title = 'Window Film Philadelphia — Elements' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>{title}</title>
+  </head>
+  <body class="bg-slate font-body text-white antialiased">
+    <slot />
+
+    <script>
+      // Copy to clipboard for any .copy-btn button
+      document.querySelectorAll('.copy-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const code = btn.getAttribute('data-code') ?? '';
+          try {
+            await navigator.clipboard.writeText(code);
+            const original = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = original; }, 1500);
+          } catch {
+            btn.textContent = 'Error';
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

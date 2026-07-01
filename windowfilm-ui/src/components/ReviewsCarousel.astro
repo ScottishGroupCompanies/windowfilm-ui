@@ -1,0 +1,107 @@
+---
+// ReviewsCarousel.astro
+// Reviews carousel with drag-to-scroll, scroll-snap, dots, and prev/next
+// arrows (from the homepage). Vanilla JS, no libraries.
+//
+// HOW TO USE:
+//   <ReviewsCarousel reviews={[{ name, quote, detail, avatar }, ...]} />
+
+interface Review { name: string; quote: string; detail: string; avatar?: string; }
+interface Props {
+  headline?: string;
+  reviews?: Review[];
+}
+
+const CLD = 'https://res.cloudinary.com/deunehrew/image/fetch/f_auto,q_auto,w_120/';
+const {
+  headline = 'Philadelphia trusts us with their glass',
+  reviews = [
+    { name: 'Sarah M.', quote: 'Our living room stays cool and we finally have privacy. Best investment we made.', detail: 'Residential — Manayunk', avatar: CLD + 'https://d8j0ntlcm91z4.cloudfront.net/hf_20260617_151111_3524cfde.png' },
+    { name: 'David R.', quote: 'Professional, fast, and the difference is unbelievable. Highly recommend.', detail: 'Full home film — Center City', avatar: CLD + 'https://d8j0ntlcm91z4.cloudfront.net/hf_20260617_151113_02acc854.png' },
+    { name: 'Michael T.', quote: 'They did our entire office building. On time, clean, energy savings showed up immediately.', detail: 'Commercial — Old City', avatar: CLD + 'https://d8j0ntlcm91z4.cloudfront.net/hf_20260617_151115_02debc21.png' },
+    { name: 'Janet K.', quote: 'The team was courteous and the glare reduction is exactly what we needed.', detail: 'Residential — Chestnut Hill', avatar: CLD + 'https://d8j0ntlcm91z4.cloudfront.net/hf_20260617_151118_f1d9f385.png' },
+    { name: 'Alex & Maria', quote: 'Beautiful decorative film in our storefront. Customers keep asking about it.', detail: 'Retail — Fishtown', avatar: CLD + 'https://d8j0ntlcm91z4.cloudfront.net/hf_20260617_151120_791e7f80.png' },
+    { name: 'James W.', quote: 'Security film gave us real peace of mind. Worth every penny.', detail: 'Commercial — University City', avatar: CLD + 'https://d8j0ntlcm91z4.cloudfront.net/hf_20260617_151123_ad8e035f.png' },
+  ],
+} = Astro.props;
+---
+
+<section class="bg-ink py-16">
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="mb-8 flex items-end justify-between gap-4">
+      <div>
+        <p class="mb-1 text-sm font-semibold text-brand-light">★★★★★ 4.9 out of 5 · Google Reviews</p>
+        <h2 class="font-display text-3xl font-bold text-white sm:text-4xl">{headline}</h2>
+      </div>
+      <div class="hidden gap-2 sm:flex">
+        <button class="reviews__arrow prev flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white" aria-label="Previous">‹</button>
+        <button class="reviews__arrow next flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white" aria-label="Next">›</button>
+      </div>
+    </div>
+
+    <div class="reviews__carousel flex gap-5 overflow-x-auto pb-4">
+      {reviews.map((r) => (
+        <figure class="w-80 shrink-0 rounded-2xl border border-white/10 bg-white/5 p-6" style="scroll-snap-align:start">
+          <div class="mb-3 text-brand-light">★★★★★</div>
+          <blockquote class="text-white/85">"{r.quote}"</blockquote>
+          <figcaption class="mt-5 flex items-center gap-3">
+            {r.avatar
+              ? <img src={r.avatar} alt={r.name} class="h-10 w-10 rounded-full object-cover" loading="lazy" />
+              : <span class="flex h-10 w-10 items-center justify-center rounded-full bg-brand/20 font-semibold text-brand-light">{r.name.charAt(0)}</span>}
+            <div>
+              <div class="font-semibold text-white">{r.name}</div>
+              <div class="text-xs text-white/50">{r.detail}</div>
+            </div>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+
+    <div class="reviews__dots mt-4 flex justify-center gap-2"></div>
+  </div>
+</section>
+
+<style>
+  .reviews__carousel { scroll-snap-type: x mandatory; scrollbar-width: none; cursor: grab; }
+  .reviews__carousel::-webkit-scrollbar { display: none; }
+  .reviews__carousel.dragging { cursor: grabbing; scroll-snap-type: none; }
+  .reviews__dot { width: 9px; height: 9px; border-radius: 9999px; background: rgba(255,255,255,0.25); transition: all 0.3s ease; }
+  .reviews__dot.active { width: 24px; border-radius: 9px; background: #7CB342; }
+  .reviews__arrow { transition: background 0.2s, border-color 0.2s, color 0.2s; }
+  .reviews__arrow:hover { background: rgba(255,255,255,0.1); }
+</style>
+
+<script>
+  (function initReviewsCarousel() {
+    const track = document.querySelector<HTMLElement>('.reviews__carousel');
+    if (!track) return;
+    const dotsWrap = document.querySelector<HTMLElement>('.reviews__dots');
+    const cards = Array.from(track.children) as HTMLElement[];
+
+    // dots
+    cards.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'reviews__dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => cards[i].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' }));
+      dotsWrap?.appendChild(dot);
+    });
+    const dots = Array.from(dotsWrap?.children || []) as HTMLElement[];
+
+    // active dot on scroll
+    track.addEventListener('scroll', () => {
+      const idx = Math.round(track.scrollLeft / (cards[0].offsetWidth + 20));
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    });
+
+    // arrows
+    const step = () => cards[0].offsetWidth + 20;
+    document.querySelector('.reviews__arrow.next')?.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
+    document.querySelector('.reviews__arrow.prev')?.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
+
+    // drag to scroll
+    let down = false, startX = 0, startScroll = 0;
+    track.addEventListener('mousedown', (e) => { down = true; track.classList.add('dragging'); startX = e.pageX; startScroll = track.scrollLeft; });
+    window.addEventListener('mouseup', () => { down = false; track.classList.remove('dragging'); });
+    track.addEventListener('mousemove', (e) => { if (!down) return; e.preventDefault(); track.scrollLeft = startScroll - (e.pageX - startX); });
+  })();
+</script>

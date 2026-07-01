@@ -1,0 +1,313 @@
+---
+import CatalogLayout from '../layouts/CatalogLayout.astro';
+import ElementShowcase from '../components/catalog/ElementShowcase.astro';
+
+// Elements
+import HeroVideo from '../components/HeroVideo.astro';
+import HeroSubpage from '../components/HeroSubpage.astro';
+import TrustStrip from '../components/TrustStrip.astro';
+import WhatWeDoPanels from '../components/WhatWeDoPanels.astro';
+import HowItWorksSlideshow from '../components/HowItWorksSlideshow.astro';
+import ApplicationsGrid from '../components/ApplicationsGrid.astro';
+import BenefitsTabs from '../components/BenefitsTabs.astro';
+import ReviewsCarousel from '../components/ReviewsCarousel.astro';
+import VideoBand from '../components/VideoBand.astro';
+
+// Animations
+import CountUp from '../components/animations/CountUp.astro';
+import ScrollReveal from '../components/animations/ScrollReveal.astro';
+import WordStagger from '../components/animations/WordStagger.astro';
+import FadeInUp from '../components/animations/FadeInUp.astro';
+
+const elementNav = [
+  { id: 'herovideo', label: 'Hero Video' },
+  { id: 'herosubpage', label: 'Hero Subpage' },
+  { id: 'truststrip', label: 'Trust Strip' },
+  { id: 'whatwedopanels', label: 'What We Do Panels' },
+  { id: 'howitworksslideshow', label: 'How It Works Slideshow' },
+  { id: 'applicationsgrid', label: 'Applications Grid' },
+  { id: 'benefitstabs', label: 'Benefits Tabs' },
+  { id: 'reviewscarousel', label: 'Reviews Carousel' },
+  { id: 'videoband', label: 'Video Band' },
+  { id: 'mobilestickycta', label: 'Mobile Sticky CTA' },
+];
+const animationNav = [
+  { id: 'countup', label: 'Count Up' },
+  { id: 'scrollreveal', label: 'Scroll Reveal' },
+  { id: 'wordstagger', label: 'Word Stagger' },
+  { id: 'fadeinup', label: 'Fade In Up' },
+];
+---
+
+<CatalogLayout>
+  <header class="border-b border-white/10 bg-ink">
+    <div class="mx-auto max-w-6xl px-6 py-10">
+      <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-light">Window Film Philadelphia</p>
+      <h1 class="font-display text-4xl font-bold text-white">Element Catalog</h1>
+      <p class="mt-3 max-w-2xl text-white/60">
+        Every reusable element and animation from the site lives here. Find what you need,
+        see it running, and copy the code into your page.
+        <strong class="text-white/80">Rule:</strong> new elements and animations get added here first, then used.
+      </p>
+    </div>
+  </header>
+
+  <div class="mx-auto flex max-w-6xl gap-10 px-6 py-12">
+    <aside class="sticky top-12 hidden h-fit w-52 shrink-0 lg:block">
+      <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Elements</p>
+      <nav class="mb-6 flex flex-col gap-1 text-sm">
+        {elementNav.map((it) => (
+          <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
+        ))}
+      </nav>
+      <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Animations</p>
+      <nav class="flex flex-col gap-1 text-sm">
+        {animationNav.map((it) => (
+          <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
+        ))}
+      </nav>
+    </aside>
+
+    <main class="min-w-0 flex-1">
+
+      <h2 class="mb-6 font-display text-lg uppercase tracking-wide text-white/40">Elements</h2>
+
+      <ElementShowcase
+        title="Hero Video"
+        importAs="HeroVideo"
+        file="components/HeroVideo.astro"
+        usage="Main homepage hero: Cloudinary background video + headline that reveals word-by-word on load. Change eyebrow, headline, subtitle, and the video/poster URLs."
+        code={`<HeroVideo
+  eyebrow="PHILADELPHIA'S #1 WINDOW FILM COMPANY"
+  headline="Philadelphia's glass, transformed."
+  subtitle="Energy savings. UV protection. Safety & security."
+  video="https://res.cloudinary.com/.../hero.mp4"
+/>`}
+      >
+        <HeroVideo />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Hero Subpage"
+        importAs="HeroSubpage"
+        file="components/HeroSubpage.astro"
+        usage="Compact hero for inner pages (services, benefits, applications). Image background instead of video. Change eyebrow, title, subtitle per page."
+        code={`<HeroSubpage
+  eyebrow="COMMERCIAL WINDOW FILM"
+  title="Office buildings, cool and protected."
+  subtitle="Solar control and safety film for Philadelphia offices."
+  bg="https://res.cloudinary.com/.../image.jpg"
+/>`}
+      >
+        <HeroSubpage />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Trust Strip"
+        importAs="TrustStrip"
+        file="components/TrustStrip.astro"
+        usage="Infinite logo carousel (pure CSS, 32s loop, edge fade). The track duplicates your logos for a seamless loop. Pass your 12 brand logos or use the defaults. Usually sits right below the hero."
+        code={`<TrustStrip
+  logos={[
+    { src: '/images/3m.webp', alt: '3M' },
+    { src: '/images/llumar.webp', alt: 'LLumar' },
+  ]}
+/>`}
+      >
+        <TrustStrip />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="What We Do Panels"
+        importAs="WhatWeDoPanels"
+        file="components/WhatWeDoPanels.astro"
+        usage="Category panels with staggered fade-in on load and a cinematic hover (image zoom, description rises, arrow slides in, underline grows). Hover a card to see it. Pure CSS."
+        code={`<WhatWeDoPanels
+  panels={[
+    { title: 'Residential', desc: '...', img: 'https://loremflickr.com/600/800/house?lock=11', href: '/residential/' },
+    { title: 'Commercial', desc: '...', img: '/images/commercial-card.svg', href: '/commercial/' },
+  ]}
+/>`}
+      >
+        <WhatWeDoPanels />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="How It Works Slideshow"
+        importAs="HowItWorksSlideshow"
+        file="components/HowItWorksSlideshow.astro"
+        usage="Auto-play slideshow (5s/slide) with progress bar, clickable side nav, per-slide staggered content, and a glassmorphism FAQ accordion. Replace slides with your real steps, images, and FAQs."
+        code={`<HowItWorksSlideshow
+  slides={[
+    { step: '01', title: 'Free consultation', desc: '...', img: '...', faq: [{ q: '...', a: '...' }] },
+    { step: '02', title: 'Choose your film', desc: '...', img: '...' },
+  ]}
+/>`}
+      >
+        <HowItWorksSlideshow />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Applications Grid"
+        importAs="ApplicationsGrid"
+        file="components/ApplicationsGrid.astro"
+        usage="Grid of application cards with hover image-zoom and overlay darken. Pairs well with Scroll Reveal (add class scroll-reveal to the cards). Pure CSS hover."
+        code={`<ApplicationsGrid
+  items={[
+    { title: 'Homes & Condos', img: '...', href: '/residential/' },
+    { title: 'Office Buildings', img: '...', href: '/commercial/' },
+  ]}
+/>`}
+      >
+        <ApplicationsGrid />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Benefits Tabs"
+        importAs="BenefitsTabs"
+        file="components/BenefitsTabs.astro"
+        usage="Tabbed benefits section — click a tab to switch the image and panel. Ported from the standalone Benefits.astro. Pass your 8 tabs (energy, UV, privacy, glare, graffiti, safety, decorative, solar)."
+        code={`<BenefitsTabs
+  tabs={[
+    { key: 'energy', label: 'Energy', title: 'Lower energy bills', desc: '...', img: '...' },
+    { key: 'uv', label: 'UV', title: '99% UV protection', desc: '...', img: '...' },
+  ]}
+/>`}
+      >
+        <BenefitsTabs />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Reviews Carousel"
+        importAs="ReviewsCarousel"
+        file="components/ReviewsCarousel.astro"
+        usage="Reviews carousel with drag-to-scroll, scroll-snap, dots, and prev/next arrows. Drag the cards or use the arrows. Pass your real reviews with the reviews prop."
+        code={`<ReviewsCarousel
+  reviews={[
+    { name: 'Sarah M.', quote: '...', detail: 'Manayunk', avatar: '...' },
+    { name: 'David R.', quote: '...', detail: 'Center City' },
+  ]}
+/>`}
+      >
+        <ReviewsCarousel />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Video Band"
+        importAs="VideoBand"
+        file="components/VideoBand.astro"
+        usage="Full-width band with a looping background video and overlaid heading + CTA. No JS. Swap the video URL for your own Cloudinary clip."
+        code={`<VideoBand
+  heading="See the difference film makes"
+  subtitle="Professional installation, backed by warranty."
+  video="https://res.cloudinary.com/.../clip.mp4"
+/>`}
+      >
+        <VideoBand />
+      </ElementShowcase>
+
+      <!-- Mobile Sticky CTA: fixed to viewport bottom in real use, shown statically here -->
+      <section class="mb-16 scroll-mt-24" id="mobilestickycta">
+        <header class="mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-white/10 pb-3">
+          <h2 class="font-display text-2xl text-white">Mobile Sticky CTA</h2>
+          <code class="rounded bg-brand/15 px-2 py-0.5 font-mono text-sm text-brand-light">&lt;MobileStickyCTA /&gt;</code>
+          <span class="font-mono text-xs text-white/40">src/components/MobileStickyCTA.astro</span>
+        </header>
+        <p class="mb-5 max-w-2xl text-sm leading-relaxed text-white/60">
+          A call/quote bar pinned to the bottom of the screen on mobile only (hidden on desktop, CSS only).
+          Shown here as a static preview — in real use it sticks to the viewport bottom. Place it once near the end of the page body.
+        </p>
+        <div class="mb-5 overflow-hidden rounded-xl border border-white/10 bg-ink p-4">
+          <div class="flex gap-2 rounded-lg border-t border-white/10 bg-ink/95 p-3">
+            <span class="flex-1 rounded-full border border-white/25 py-3 text-center font-semibold text-white">(267) 394-7980</span>
+            <span class="flex-1 rounded-full bg-brand py-3 text-center font-semibold text-white">Free quote</span>
+          </div>
+        </div>
+        <div class="mb-3">
+          <p class="mb-1 text-xs uppercase tracking-wide text-white/40">1. Import at the top of your file (between the ---)</p>
+          <div class="copy-block relative rounded-lg border border-white/10 bg-black/40">
+            <button class="copy-btn absolute right-2 top-2 rounded-md border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/70 transition hover:bg-white/15" data-code="import MobileStickyCTA from '../components/MobileStickyCTA.astro';">Copy</button>
+            <pre class="overflow-x-auto p-4 pr-20 text-sm"><code class="font-mono text-white/80">import MobileStickyCTA from '../components/MobileStickyCTA.astro';</code></pre>
+          </div>
+        </div>
+        <div>
+          <p class="mb-1 text-xs uppercase tracking-wide text-white/40">2. Paste near the end of the page body</p>
+          <div class="copy-block relative rounded-lg border border-white/10 bg-black/40">
+            <button class="copy-btn absolute right-2 top-2 rounded-md border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/70 transition hover:bg-white/15" data-code={`<MobileStickyCTA phone="(267) 394-7980" quoteHref="/contact/" />`}>Copy</button>
+            <pre class="overflow-x-auto p-4 pr-20 text-sm"><code class="font-mono text-white/80">{`<MobileStickyCTA phone="(267) 394-7980" quoteHref="/contact/" />`}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <h2 class="mb-6 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Animations</h2>
+
+      <ElementShowcase
+        title="Count Up"
+        importAs="CountUp"
+        file="components/animations/CountUp.astro"
+        usage="Number that counts up when it scrolls into view. (Bug fix: production read data-count but emitted data-count-end — this version uses matching attributes so it fires reliably.) Scroll it into view to see it run."
+        code={`<CountUp end={2400} suffix="+" label="Projects completed" />
+<CountUp end={98} suffix="%" label="Would recommend" />`}
+      >
+        <div class="grid grid-cols-3 gap-6 p-10">
+          <CountUp end={2400} suffix="+" label="Projects completed" />
+          <CountUp end={98} suffix="%" label="Would recommend" />
+          <CountUp end={15} suffix="+" label="Years in Philly" />
+        </div>
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Scroll Reveal"
+        importAs="ScrollReveal"
+        file="components/animations/ScrollReveal.astro"
+        usage="Generic reveal-on-scroll utility. Add class scroll-reveal to any element (they auto-stagger in groups of 4), or wrap content in the component. Drop it once on a page to load the CSS + JS."
+        code={`<!-- add the class to anything -->
+<div class="scroll-reveal">...</div>
+
+<!-- or wrap content -->
+<ScrollReveal>
+  <h2>Reveals on scroll</h2>
+</ScrollReveal>`}
+      >
+        <div class="p-10">
+          <ScrollReveal>
+            <p class="font-display text-2xl text-white">This content reveals as you scroll to it.</p>
+          </ScrollReveal>
+        </div>
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Word Stagger"
+        importAs="WordStagger"
+        file="components/animations/WordStagger.astro"
+        usage="Reveals a heading word-by-word on load (the effect used in the hero). Each word rises + fades in, staggered. Pass the text and the tag to render."
+        code={`<WordStagger
+  text="Philadelphia's glass, transformed."
+  as="h2"
+  class="font-display text-4xl font-bold text-white"
+/>`}
+      >
+        <div class="p-10">
+          <WordStagger text="Philadelphia's glass, transformed." as="h2" class="font-display text-4xl font-bold text-white" />
+        </div>
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Fade In Up"
+        importAs="FadeInUp"
+        file="components/animations/FadeInUp.astro"
+        usage="Simple single-element reveal (rises + fades) on scroll, with an optional delay. Good for one-off elements when you don't need the shared scroll-reveal class."
+        code={`<FadeInUp delay={150}>
+  <h2>Appears on scroll</h2>
+</FadeInUp>`}
+      >
+        <div class="p-10">
+          <FadeInUp>
+            <p class="font-display text-2xl text-white">This text fades up as it enters the viewport.</p>
+          </FadeInUp>
+        </div>
+      </ElementShowcase>
+
+    </main>
+  </div>
+</CatalogLayout>

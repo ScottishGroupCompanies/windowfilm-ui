@@ -1,0 +1,69 @@
+---
+// WhatWeDoPanels.astro
+// Category panels with staggered fade-in on load + cinematic hover
+// (image zoom, description rises, arrow slides in, green underline grows).
+// Pure CSS. No JS.
+//
+// HOW TO USE:
+//   <WhatWeDoPanels panels={[{ title, desc, img, href }, ...]} />
+
+interface Panel { title: string; desc: string; img: string; href?: string; }
+interface Props { panels?: Panel[]; }
+
+// Default images are the client's real Cloudinary images. Assigned in the
+// order provided — if a photo doesn't match its category, just swap the
+// `img` URLs below. Replace freely as you finalize photography.
+const {
+  panels = [
+    { title: 'Residential', desc: 'Privacy, comfort, and UV protection for your home.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1782907661/https://res.cloudinary.com/deunehrew/image/fetch/f_webp%2Cq_auto%2Cw_600/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_175418_885cb5f7-7d7a-43f9-a1a2-33926a01abc1.png', href: '/residential/' },
+    { title: 'Commercial', desc: 'Energy savings and branding for offices and retail.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1782907660/https://res.cloudinary.com/deunehrew/image/fetch/f_webp%2Cq_auto%2Cw_600/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_175417_997747da-e186-459f-83ee-82d3a284366e.png', href: '/commercial/' },
+    { title: 'Government', desc: 'Security and safety film for public buildings.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1782765437/https://res.cloudinary.com/deunehrew/image/fetch/f_webp%2Cfl_awebp%2Cq_auto%2Cw_600/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_163225_ef3d64e4-534f-42b3-bc9b-af78ddffac20.png', href: '/government/' },
+    { title: 'Specialty', desc: 'Decorative, anti-graffiti, and custom solutions.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1782765436/https://res.cloudinary.com/deunehrew/image/fetch/f_webp%2Cfl_awebp%2Cq_auto%2Cw_600/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_170303_116dd402-20cd-4cc2-96fd-f34262614195.png', href: '/specialty/' },
+  ],
+} = Astro.props;
+---
+
+<section class="bg-slate py-16">
+  <div class="mx-auto grid max-w-6xl gap-5 px-6 sm:grid-cols-2 lg:grid-cols-4">
+    {panels.map((p, i) => (
+      <a href={p.href} class="wwd__panel group relative block overflow-hidden rounded-2xl" style={`animation-delay:${i * 120}ms`}>
+        <div class="aspect-[3/4] overflow-hidden">
+          <img src={p.img} alt={p.title} class="wwd__panel-img h-full w-full object-cover" loading="lazy" />
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 p-5">
+          <h3 class="font-display text-xl font-bold text-white">{p.title}</h3>
+          <p class="wwd__panel-desc mt-1 text-sm text-white/75">{p.desc}</p>
+          <span class="wwd__panel-arrow mt-2 inline-block font-semibold text-brand-light">Learn more →</span>
+          <span class="wwd__panel-line mt-3 block h-0.5 bg-brand-light"></span>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .wwd__panel {
+    opacity: 0;
+    transform: translateY(40px);
+    animation: wwd-fade-in 0.8s ease forwards;
+  }
+  @keyframes wwd-fade-in { to { opacity: 1; transform: translateY(0); } }
+
+  .wwd__panel-img { transition: transform 0.5s ease; }
+  .wwd__panel:hover .wwd__panel-img { transform: scale(1.05); }
+
+  .wwd__panel-desc { opacity: 0; transform: translateY(12px); transition: opacity 0.4s ease, transform 0.4s ease; }
+  .wwd__panel:hover .wwd__panel-desc { opacity: 1; transform: translateY(0); }
+
+  .wwd__panel-arrow { opacity: 0; transform: translateX(-8px); transition: opacity 0.4s ease, transform 0.4s ease; }
+  .wwd__panel:hover .wwd__panel-arrow { opacity: 1; transform: translateX(0); }
+
+  .wwd__panel-line { width: 0; transition: width 0.4s ease; }
+  .wwd__panel:hover .wwd__panel-line { width: 100%; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wwd__panel { opacity: 1; transform: none; animation: none; }
+    .wwd__panel-desc, .wwd__panel-arrow { opacity: 1; transform: none; }
+  }
+</style>

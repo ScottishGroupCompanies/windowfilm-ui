@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5b6b7f"/>
+      <stop offset="1" stop-color="#39485a"/>
+    </linearGradient>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="3" r="1.4" fill="white" opacity="0.10"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="800" fill="url(#g)"/>
+  <rect width="600" height="800" fill="url(#dots)"/>
+  <g transform="translate(258,300) scale(2.6)"><path d="M16 3 L30 11 H2 Z" fill="none" stroke="white" stroke-width="2.4" stroke-linejoin="round"/><line x1="6" y1="13" x2="6" y2="26" stroke="white" stroke-width="2.4"/><line x1="13" y1="13" x2="13" y2="26" stroke="white" stroke-width="2.4"/><line x1="19" y1="13" x2="19" y2="26" stroke="white" stroke-width="2.4"/><line x1="26" y1="13" x2="26" y2="26" stroke="white" stroke-width="2.4"/><line x1="2" y1="28" x2="30" y2="28" stroke="white" stroke-width="2.4"/></g>
+  <text x="300" y="500" font-family="Georgia, serif" font-size="52" font-weight="bold" fill="white" text-anchor="middle">Government</text>
+  <text x="300" y="545" font-family="system-ui, sans-serif" font-size="20" fill="white" opacity="0.7" text-anchor="middle" letter-spacing="3">PLACEHOLDER</text>
+</svg>

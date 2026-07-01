@@ -1,0 +1,49 @@
+---
+// ApplicationsGrid.astro
+// Grid of application cards with hover image-zoom + overlay darken.
+// Pure CSS. Pairs well with ScrollReveal (add class scroll-reveal to cards).
+//
+// HOW TO USE:
+//   <ApplicationsGrid items={[{ title, img, href }, ...]} />
+
+interface Item { title: string; img: string; href?: string; }
+interface Props { items?: Item[]; }
+
+// Default images are the client's real Cloudinary images (the 9 remaining
+// after What We Do). Assigned in order — swap the `img` URLs if a photo
+// doesn't match its category.
+const {
+  items = [
+    { title: 'Homes & Condos', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1782928259/https://res.cloudinary.com/deunehrew/image/fetch/f_webp%2Cq_auto%2Cw_1920/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260617_213616_509bcc09-ab60-49ed-a07e-c5f867aca22e.png' },
+    { title: 'Office Buildings', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1782715033/https://res.cloudinary.com/deunehrew/image/fetch/f_webp%2Cq_auto%2Cw_800/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260609_203108_a943f5ca-34d8-43a7-8e38-3190e0069f87.png' },
+    { title: 'Retail', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1781806377/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260618_180834_da6c0b4c-131e-4533-a508-e5062f7151bf.png' },
+    { title: 'Hotels', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1781806377/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260618_180830_3d905ef9-c9c0-480a-86ed-7b1a99d67033.png' },
+    { title: 'Schools', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1781806219/https://res.cloudinary.com/deunehrew/image/fetch/f_auto%2Cq_auto%2Cw_800/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260609_203926_92a46f96-3f3c-46a7-a55c-5a6c8cf64fb2.png' },
+    { title: 'Government', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1781806028/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260618_175602_3ec0c373-ae60-4251-9694-bd03190474d1.png' },
+    { title: 'Museums', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1781795412/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_175446_f320deaf-2e71-4adf-917d-371be97bdf92.png' },
+    { title: 'Hospitals', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1781795402/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260609_202304_c5668858-7ee0-48ed-b712-7716c05c4ec1.png' },
+    { title: 'Churches', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1781795402/https://res.cloudinary.com/deunehrew/image/fetch/f_auto%2Cq_auto%2Cw_600/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260617_205012_0aa91c5a-8247-4b03-80f7-7a2e0ef67371.png' },
+  ],
+} = Astro.props;
+---
+
+<section class="bg-ink py-16">
+  <div class="mx-auto grid max-w-6xl gap-4 px-6 sm:grid-cols-2 lg:grid-cols-3">
+    {items.map((it) => (
+      <a href={it.href} class="apps-grid__card group relative block overflow-hidden rounded-xl">
+        <div class="aspect-[4/3] overflow-hidden">
+          <img src={it.img} alt={it.title} class="apps-grid__card-img h-full w-full object-cover" loading="lazy" />
+        </div>
+        <div class="apps-grid__card-overlay absolute inset-0"></div>
+        <h3 class="absolute bottom-4 left-4 font-display text-lg font-bold text-white drop-shadow">{it.title}</h3>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .apps-grid__card-img { transition: transform 0.3s ease; }
+  .apps-grid__card:hover .apps-grid__card-img { transform: scale(1.03); }
+  .apps-grid__card-overlay { background: rgba(0,0,0,0); transition: background 0.3s ease; }
+  .apps-grid__card:hover .apps-grid__card-overlay { background: rgba(0,0,0,0.25); }
+</style>

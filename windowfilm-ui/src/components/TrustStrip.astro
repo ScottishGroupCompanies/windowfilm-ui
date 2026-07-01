@@ -1,0 +1,64 @@
+---
+// TrustStrip.astro
+// Infinite CSS logo carousel (from the homepage trust strip).
+// Pure CSS @keyframes (32s loop) + mask-image edge fade. No JS needed.
+// The track duplicates the logos for a seamless loop.
+//
+// HOW TO USE:
+//   <TrustStrip logos={[{ src: '/images/3m.webp', alt: '3M' }, ...]} />
+//   Pass your 12 brand logos, or use the WFP defaults below.
+
+interface Logo { src: string; alt: string; }
+interface Props {
+  title?: string;
+  logos?: Logo[];
+}
+
+const {
+  title = 'TRUSTED BY LEADING PHILADELPHIA BUSINESSES',
+  logos = [
+    { src: '/images/2021-09-3m-window-film-philadelphia.jpg', alt: '3M' },
+    { src: '/images/2021-09-llumar-window-film-philadelphia.jpg', alt: 'LLumar' },
+    { src: '/images/2021-09-vista-window-film-philadelphia.jpg', alt: 'Vista' },
+    { src: '/images/2021-09-solar-gard-window-film-philadelphia.jpg', alt: 'Solar Gard' },
+    { src: '/images/2021-09-huper-optik-window-film-philadelphia.jpg', alt: 'Huper Optik' },
+    { src: '/images/2021-09-casper-window-film-philadelphia.jpg', alt: 'Casper' },
+    { src: '/images/2021-09-cbond-window-film-philadelphia.jpg', alt: 'C-Bond' },
+    { src: '/images/2021-09-madico-window-film-philadelphia.jpg', alt: 'Madico' },
+    { src: '/images/2021-09-hdclear-window-film-philadelphia.jpg', alt: 'HD Clear' },
+    { src: '/images/2021-09-hanita-coatings-window-film-philadelphia.jpg', alt: 'Hanita Coatings' },
+    { src: '/images/2021-09-solyx-window-film-philadelphia.jpg', alt: 'Solyx' },
+    { src: '/images/2021-09-graffiti-shield-window-film-philadelphia.jpg', alt: 'Graffiti Shield' },
+  ],
+} = Astro.props;
+
+const track = [...logos, ...logos]; // duplicate for seamless loop
+---
+
+<section class="bg-ink py-10">
+  <p class="mb-8 text-center text-xs font-semibold uppercase tracking-[0.2em] text-white/40">{title}</p>
+  <div class="trust-strip__mask overflow-hidden">
+    <div class="trust-strip__track flex w-max items-center gap-16">
+      {track.map((logo) => (
+        <img src={logo.src} alt={logo.alt} class="h-9 w-auto opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0" loading="lazy" />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .trust-strip__track {
+    animation: scroll-left 32s linear infinite;
+  }
+  .trust-strip__mask {
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  }
+  @keyframes scroll-left {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .trust-strip__track { animation: none; flex-wrap: wrap; justify-content: center; }
+  }
+</style>

@@ -1,0 +1,57 @@
+---
+// HeroSubpage.astro
+// Hero for INNER PAGES (services, benefits, applications, etc.).
+// More compact than the main hero. Background image with dark overlay.
+//
+// HOW TO USE:
+//   - Change `eyebrow`, `title`, `subtitle` per page.
+//   - `bg` is the background image (use a Cloudinary URL from your site).
+//   - Both buttons are optional: if you don't pass `ctaText`, it won't show.
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  bg?: string;
+  ctaText?: string;
+  ctaHref?: string;
+  secondaryText?: string;
+  secondaryHref?: string;
+}
+
+const {
+  eyebrow = 'RESIDENTIAL WINDOW FILM',
+  title = 'Home window tinting,\ndone right.',
+  subtitle = 'Privacy, UV protection, and energy savings for homes across Philadelphia.',
+  bg = 'https://res.cloudinary.com/deunehrew/image/fetch/f_auto,q_auto,w_1920/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260617_213616_509bcc09-ab60-49ed-a07e-c5f867aca22e.png',
+  ctaText = 'Get a free quote',
+  ctaHref = '/contact/',
+  secondaryText = 'See our services',
+  secondaryHref = '/services/',
+} = Astro.props;
+---
+
+<section class="relative isolate flex min-h-[420px] items-center overflow-hidden">
+  <!-- background -->
+  <img src={bg} alt="" class="absolute inset-0 -z-10 h-full w-full object-cover" />
+  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-ink/90 via-ink/70 to-ink/30"></div>
+
+  <div class="mx-auto w-full max-w-6xl px-6 py-16">
+    {eyebrow && (
+      <p class="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-light">
+        <span class="inline-block h-1.5 w-1.5 rounded-full bg-brand-light"></span>{eyebrow}
+      </p>
+    )}
+    <h1 class="max-w-2xl whitespace-pre-line font-display text-4xl font-bold leading-tight text-white sm:text-5xl">{title}</h1>
+    {subtitle && <p class="mt-5 max-w-xl text-lg text-white/70">{subtitle}</p>}
+
+    <div class="mt-8 flex flex-wrap gap-3">
+      {ctaText && (
+        <a href={ctaHref} class="rounded-full bg-brand px-7 py-3 font-semibold text-white transition hover:bg-brand-dark">{ctaText}</a>
+      )}
+      {secondaryText && (
+        <a href={secondaryHref} class="rounded-full border border-white/30 px-7 py-3 font-semibold text-white transition hover:bg-white/10">{secondaryText}</a>
+      )}
+    </div>
+  </div>
+</section>
