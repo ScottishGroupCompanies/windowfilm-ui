@@ -1,0 +1,225 @@
+---
+// GalleryBanner.astro
+// Editorial full-width banner: giant cropped display typography on the
+// left (letters intentionally bleed off the edge — modern editorial look),
+// supporting copy below it, and a fanned photo stack on the right that
+// spreads apart on hover. Pure CSS + vanilla JS, no libraries.
+//
+// The photo strips are narrow vertical crops (like film strips). On hover
+// over the stack they fan out; hovering one strip expands it to a full
+// card. Click a strip to bring it to the front.
+//
+// HOW TO USE:
+//   <GalleryBanner
+//     titleLines={["OUR", "WORK."]}
+//     eyebrow="RESIDENTIAL INSTALLS"
+//     description="A collection of real installations across Philadelphia."
+//     photos={["url1.png", ..., "url5.png"]}
+//     theme="light"   (or "dark" to match dark sections)
+//   />
+
+interface Props {
+  titleLines?: string[];
+  eyebrow?: string;
+  description?: string;
+  photos?: string[];
+  hintText?: string;
+  theme?: 'light' | 'dark';
+}
+
+const {
+  titleLines = ['OUR', 'WORK.'],
+  eyebrow = 'RESIDENTIAL INSTALLS',
+  description = 'A collection of real window film installations across Philadelphia. Every project measured, applied, and finished by our own certified team.',
+  photos = [
+    'https://res.cloudinary.com/deunehrew/image/upload/v1783023662/hf_20260702_201720_94404319-fbd4-4490-838e-e2e772e6571a_uphqo3.png',
+    'https://res.cloudinary.com/deunehrew/image/upload/v1783023672/hf_20260702_201750_55c4f4da-181e-4c45-a425-4fcd4ffdc5c5_uajwcn.png',
+    'https://res.cloudinary.com/deunehrew/image/upload/v1783023687/hf_20260702_201942_67c4f492-ced2-4b95-81f7-9d9ce296e767_ywb5at.png',
+    'https://res.cloudinary.com/deunehrew/image/upload/v1783023698/hf_20260702_201815_00fa5609-ece8-449f-aa81-66c2b459f189_o1dykm.png',
+    'https://res.cloudinary.com/deunehrew/image/upload/v1783023709/hf_20260702_201841_873022c5-ccd1-4043-9947-576a3388e50a_gwnd08.png',
+  ],
+  hintText = 'Hover the photos · click to bring forward',
+  theme = 'light',
+} = Astro.props;
+---
+
+<section class={`gallery-banner gallery-banner--${theme}`}>
+  <div class="gallery-banner__inner">
+
+    <!-- LEFT: cropped editorial typography -->
+    <div class="gallery-banner__text">
+      {eyebrow && <p class="gallery-banner__eyebrow">{eyebrow}</p>}
+      <h2 class="gallery-banner__title" aria-label={titleLines.join(' ')}>
+        {titleLines.map((line) => (
+          <span class="gallery-banner__title-line">{line}</span>
+        ))}
+      </h2>
+      {description && <p class="gallery-banner__desc">{description}</p>}
+    </div>
+
+    <!-- RIGHT: fanned photo strips -->
+    <div class="gallery-banner__gallery">
+      <div class="gallery-banner__strips">
+        {photos.slice(0, 5).map((src, i) => (
+          <button class="gallery-banner__strip" style={`--i:${i}; --n:${Math.min(photos.length, 5)};`} aria-label={`View photo ${i + 1}`}>
+            <img src={src} alt={`Project photo ${i + 1}`} loading="lazy" draggable="false" />
+          </button>
+        ))}
+      </div>
+      <p class="gallery-banner__hint">{hintText}</p>
+    </div>
+
+  </div>
+</section>
+
+<style is:global>
+  .gallery-banner {
+    overflow: hidden; /* the cropped text bleeds — this contains it */
+    padding: 4.5rem 0;
+  }
+  .gallery-banner--light { background: #ece9e4; color: #111; }
+  .gallery-banner--dark  { background: #0d1b2a; color: #fff; }
+
+  .gallery-banner__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding-right: 1.5rem;
+  }
+  @media (min-width: 900px) {
+    .gallery-banner__inner { grid-template-columns: 1.1fr 1fr; }
+  }
+
+  /* ---- left: typography ---- */
+  .gallery-banner__eyebrow {
+    margin-left: 1.5rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin-bottom: 0.75rem;
+  }
+  .gallery-banner__title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 800;
+    line-height: 0.86;
+    letter-spacing: -0.03em;
+    font-size: clamp(4rem, 11vw, 9rem);
+    text-transform: uppercase;
+    /* the crop: pull the block past the left edge on purpose */
+    margin-left: -0.45em;
+    user-select: none;
+  }
+  .gallery-banner__title-line { display: block; }
+  .gallery-banner__desc {
+    margin-left: 1.5rem;
+    margin-top: 1.25rem;
+    max-width: 24rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0.55;
+  }
+
+  /* ---- right: photo strips ---- */
+  .gallery-banner__gallery {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  .gallery-banner__strips {
+    display: flex;
+    align-items: center;
+    height: 300px;
+    filter: drop-shadow(0 24px 40px rgba(0,0,0,0.25));
+  }
+  .gallery-banner__strip {
+    position: relative;
+    width: 72px;
+    height: 260px;
+    margin-left: -10px;
+    border: none;
+    padding: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #111;
+    transform: rotate(calc((var(--i) - (var(--n) - 1) / 2) * 2.5deg))
+               translateY(calc((var(--i) - (var(--n) - 1) / 2) * (var(--i) - (var(--n) - 1) / 2) * 4px));
+    transition:
+      width 0.5s cubic-bezier(0.34, 1.4, 0.64, 1),
+      transform 0.5s cubic-bezier(0.34, 1.4, 0.64, 1),
+      margin 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+    z-index: calc(10 + var(--i));
+  }
+  .gallery-banner__strip:first-child { margin-left: 0; }
+  .gallery-banner__strip img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  /* group hover: strips spread apart */
+  .gallery-banner__strips:hover .gallery-banner__strip {
+    margin-left: 6px;
+    transform: rotate(calc((var(--i) - (var(--n) - 1) / 2) * 4deg))
+               translateY(calc((var(--i) - (var(--n) - 1) / 2) * (var(--i) - (var(--n) - 1) / 2) * 6px));
+  }
+  .gallery-banner__strips:hover .gallery-banner__strip:first-child { margin-left: 0; }
+
+  /* single strip hover: expands into a full card */
+  .gallery-banner__strip:hover {
+    width: 190px;
+    transform: rotate(0deg) translateY(-12px) !important;
+    z-index: 99;
+  }
+
+  /* clicked: stays forward */
+  .gallery-banner__strip.is-active {
+    width: 190px;
+    transform: rotate(0deg) translateY(-8px) !important;
+    z-index: 90;
+  }
+
+  .gallery-banner__hint {
+    padding: 0.55rem 1.2rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.45;
+    border: 1px solid currentColor;
+  }
+
+  @media (max-width: 899px) {
+    .gallery-banner__title { margin-left: -0.3em; }
+    .gallery-banner__strips { height: 240px; }
+    .gallery-banner__strip { height: 200px; width: 56px; }
+    .gallery-banner__strip:hover, .gallery-banner__strip.is-active { width: 150px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-banner__strip { transition: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.gallery-banner').forEach((root) => {
+    const strips = Array.from(root.querySelectorAll<HTMLElement>('.gallery-banner__strip'));
+    strips.forEach((strip) => {
+      strip.addEventListener('click', () => {
+        const wasActive = strip.classList.contains('is-active');
+        strips.forEach((s) => s.classList.remove('is-active'));
+        if (!wasActive) strip.classList.add('is-active');
+      });
+    });
+  });
+</script>
