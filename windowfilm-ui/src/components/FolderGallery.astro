@@ -1,0 +1,236 @@
+---
+// FolderGallery.astro
+// Interactive "project folder" — click to open, photos fan out like a
+// hand of cards. Click a photo (or the folder again) to close. Pure CSS
+// transitions with a spring-like easing curve + vanilla JS, no libraries.
+// Inspired by the classic "macOS folder reveal" interaction, adapted to
+// show real before/during/after installation photos instead of a generic
+// gallery.
+//
+// HOW TO USE:
+//   <FolderGallery
+//     folderName="Residential Installs"
+//     photos={["url1.jpg", "url2.jpg", "url3.jpg", "url4.jpg", "url5.jpg"]}
+//   />
+//   Works best with exactly 5 photos (the fan math is tuned for 5).
+//   Drop several folders side by side for different categories.
+
+interface Props {
+  folderName?: string;
+  photos?: string[];
+  hintText?: string;
+}
+
+const {
+  folderName = 'Residential Installs',
+  photos = [
+    'https://res.cloudinary.com/deunehrew/image/upload/v1783023662/hf_20260702_201720_94404319-fbd4-4490-838e-e2e772e6571a_uphqo3.png',
+    'https://res.cloudinary.com/deunehrew/image/upload/v1783023672/hf_20260702_201750_55c4f4da-181e-4c45-a425-4fcd4ffdc5c5_uajwcn.png',
+    'https://res.cloudinary.com/deunehrew/image/upload/v1783023687/hf_20260702_201942_67c4f492-ced2-4b95-81f7-9d9ce296e767_ywb5at.png',
+    'https://res.cloudinary.com/deunehrew/image/upload/v1783023698/hf_20260702_201815_00fa5609-ece8-449f-aa81-66c2b459f189_o1dykm.png',
+    'https://res.cloudinary.com/deunehrew/image/upload/v1783023709/hf_20260702_201841_873022c5-ccd1-4043-9947-576a3388e50a_gwnd08.png',
+  ],
+  hintText = 'Click to see the process',
+} = Astro.props;
+
+const uid = `fg-${Math.random().toString(36).slice(2, 9)}`;
+
+// Fan-out offsets for up to 5 photos, centered on the middle card (index 2).
+const openOffsets = [-2, -1, 0, 1, 2].map((n) => ({
+  x: n * 78,
+  rotate: n * 6,
+  y: Math.abs(n) * 10,
+}));
+const stackOffsets = [-2, -1, 0, 1, 2].map((n) => ({
+  x: n * 3,
+  rotate: n * 3,
+  y: n * -4,
+}));
+---
+
+<div class="folder-gallery" id={uid}>
+  <div class="folder-gallery__stage">
+
+    <!-- closed folder body -->
+    <div class="folder-gallery__body">
+      <div class="folder-gallery__tab"></div>
+      <div class="folder-gallery__back"></div>
+    </div>
+
+    <!-- fanning photos -->
+    <div class="folder-gallery__cards">
+      {photos.slice(0, 5).map((src, i) => (
+        <button
+          class="folder-gallery__card"
+          style={`--sx:${stackOffsets[i]?.x ?? 0}px; --sy:${stackOffsets[i]?.y ?? 0}px; --sr:${stackOffsets[i]?.rotate ?? 0}deg; --ox:${openOffsets[i]?.x ?? 0}px; --oy:${(-140) + (openOffsets[i]?.y ?? 0)}px; --or:${openOffsets[i]?.rotate ?? 0}deg; z-index:${10 + i};`}
+          aria-label={`Photo ${i + 1} of ${folderName}`}
+        >
+          <img src={src} alt={`${folderName} — step ${i + 1}`} loading="lazy" />
+        </button>
+      ))}
+    </div>
+
+    <!-- folder lid (front flap), click target -->
+    <button class="folder-gallery__lid" aria-expanded="false" aria-label={`Open ${folderName} folder`}>
+      <span class="folder-gallery__label">{folderName}</span>
+    </button>
+  </div>
+
+  <p class="folder-gallery__hint">{hintText}</p>
+</div>
+
+<style is:global>
+  .folder-gallery {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 1rem 1rem;
+  }
+  .folder-gallery__stage {
+    position: relative;
+    width: 340px;
+    height: 340px;
+  }
+
+  /* closed folder shape */
+  .folder-gallery__body {
+    position: absolute;
+    inset: 0;
+    top: 60px;
+  }
+  .folder-gallery__tab {
+    position: absolute;
+    top: 0; left: 0;
+    width: 40%;
+    height: 28px;
+    background: linear-gradient(to top, #2a2a2a, #1e1e1e);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+  }
+  .folder-gallery__back {
+    position: absolute;
+    inset: 22px 0 0 0;
+    background: linear-gradient(to bottom, #1e1e1e, #0a0a0a);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 0 14px 14px 14px;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+  }
+
+  /* photo cards */
+  .folder-gallery__cards {
+    position: absolute;
+    left: 50%;
+    bottom: 40px;
+  }
+  .folder-gallery__card {
+    position: absolute;
+    bottom: 0;
+    left: -80px;
+    width: 160px;
+    height: 200px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 16px 32px rgba(0,0,0,0.45);
+    transform-origin: bottom center;
+    transform: translate(var(--sx), var(--sy)) rotate(var(--sr));
+    transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), z-index 0s;
+    cursor: default;
+    padding: 0;
+    background: #111;
+  }
+  .folder-gallery__card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+  .folder-gallery.is-open .folder-gallery__card {
+    transform: translate(var(--ox), var(--oy)) rotate(var(--or)) scale(1.05);
+    cursor: pointer;
+  }
+  .folder-gallery.is-open .folder-gallery__card:hover {
+    transform: translate(var(--ox), calc(var(--oy) - 14px)) rotate(var(--or)) scale(1.1);
+    z-index: 99 !important;
+  }
+
+  /* lid / click target */
+  .folder-gallery__lid {
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 130px;
+    background: linear-gradient(to bottom, #2a2a2a, #111);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    box-shadow: 0 -12px 30px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 1.2rem;
+    cursor: pointer;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform-origin: bottom;
+  }
+  .folder-gallery__lid:hover { transform: translateX(-50%) rotateX(-18deg) translateY(6px); }
+  .folder-gallery.is-open .folder-gallery__lid {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .folder-gallery__label {
+    padding: 0.5rem 1.1rem;
+    background: black;
+    border-radius: 8px;
+    color: rgba(255,255,255,0.9);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .folder-gallery__hint {
+    margin-top: 1.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.5);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+  }
+  .folder-gallery.is-open .folder-gallery__hint {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .folder-gallery__card, .folder-gallery__lid, .folder-gallery__hint { transition: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.folder-gallery').forEach((root) => {
+    const lid = root.querySelector<HTMLElement>('.folder-gallery__lid')!;
+    const cards = Array.from(root.querySelectorAll<HTMLElement>('.folder-gallery__card'));
+
+    function open() {
+      root.classList.add('is-open');
+      lid.setAttribute('aria-expanded', 'true');
+    }
+    function close() {
+      root.classList.remove('is-open');
+      lid.setAttribute('aria-expanded', 'false');
+    }
+
+    lid.addEventListener('click', open);
+    cards.forEach((card) => card.addEventListener('click', close));
+  });
+</script>
