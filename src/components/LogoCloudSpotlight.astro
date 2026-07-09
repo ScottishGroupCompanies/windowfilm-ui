@@ -1,6 +1,6 @@
 ---
 // LogoCloudSpotlight.astro
-// A grid of grayscale brand logos. A soft green spotlight follows the cursor
+// A grid of brand logos on white cards. A soft green spotlight follows the cursor
 // across the whole grid, coloring/brightening the logos underneath it. On
 // touch it simply shows all logos lit. Vanilla JS sets grid-level CSS vars.
 //
@@ -58,18 +58,21 @@ const {
   .lcs__cell {
     position: relative; z-index: 1;
     display: flex; align-items: center; justify-content: center;
-    padding: 0.75rem;
+    background: #fff;
+    border-radius: 0.75rem;
+    padding: 1.4rem 1rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   .lcs__cell img {
-    max-height: 32px; max-width: 100%; object-fit: contain;
-    filter: grayscale(1) brightness(0) invert(1) opacity(0.45);
-    transition: filter 0.3s ease, transform 0.3s ease;
+    max-height: 34px; max-width: 100%; object-fit: contain;
+    transition: transform 0.3s ease;
   }
-  .lcs__cell:hover img { filter: none; transform: scale(1.08); }
+  .lcs__cell:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(124,179,66,0.4); }
+  .lcs__cell:hover img { transform: scale(1.08); }
 
   @media (max-width: 768px) {
     .lcs__grid { grid-template-columns: repeat(3, 1fr); }
-    .lcs__cell img { filter: grayscale(1) brightness(0) invert(1) opacity(0.7); }
   }
   @media (prefers-reduced-motion: reduce) { .lcs__spot { transition: none; } }
 </style>
