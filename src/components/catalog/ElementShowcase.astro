@@ -17,9 +17,10 @@ interface Props {
   file: string;
   usage: string;
   code: string;
+  tall?: boolean; // reserve extra space + allow overflow (for dropdown menus)
 }
 
-const { title, importAs, file, usage, code } = Astro.props;
+const { title, importAs, file, usage, code, tall = false } = Astro.props;
 const importLine = `import ${importAs} from '../components/${file.replace('components/', '')}';`;
 const allCode = `---\n${importLine}\n---\n\n${code}`;
 ---
@@ -38,14 +39,14 @@ const allCode = `---\n${importLine}\n---\n\n${code}`;
   <p class="mb-5 max-w-2xl text-sm leading-relaxed text-white/60">{usage}</p>
 
   <!-- LIVE PREVIEW -->
-  <div class="mb-5 overflow-hidden rounded-xl border border-white/10 bg-ink">
+  <div class={`mb-5 rounded-xl border border-white/10 bg-ink ${tall ? 'overflow-visible' : 'overflow-hidden'}`}>
     <div class="flex items-center gap-2 border-b border-white/10 bg-white/5 px-4 py-2">
       <span class="h-2.5 w-2.5 rounded-full bg-white/20"></span>
       <span class="h-2.5 w-2.5 rounded-full bg-white/20"></span>
       <span class="h-2.5 w-2.5 rounded-full bg-white/20"></span>
       <span class="ml-2 text-xs text-white/40">Preview</span>
     </div>
-    <div class="p-0">
+    <div class={tall ? 'pb-64' : 'p-0'}>
       <slot />
     </div>
   </div>
