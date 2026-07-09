@@ -27,6 +27,11 @@ import BentoGridPhoto from '../components/BentoGridPhoto.astro';
 import BentoGridSymmetric from '../components/BentoGridSymmetric.astro';
 import BentoGridIllustrated from '../components/BentoGridIllustrated.astro';
 
+// CTA Sections
+import CTAAvatars from '../components/CTAAvatars.astro';
+import CTATintSlider from '../components/CTATintSlider.astro';
+import CTALightRays from '../components/CTALightRays.astro';
+
 // Elements
 import HeroVideo from '../components/HeroVideo.astro';
 import HeroSubpage from '../components/HeroSubpage.astro';
@@ -79,6 +84,11 @@ const bentoNav = [
   { id: 'bentogridsymmetric', label: 'Bento — Symmetric' },
   { id: 'bentogridillustrated', label: 'Bento — Illustrated' },
 ];
+const ctaNav = [
+  { id: 'ctaavatars', label: 'CTA — Avatars' },
+  { id: 'ctatintslider', label: 'CTA — Tint Slider' },
+  { id: 'ctalightrays', label: 'CTA — Light Rays' },
+];
 const elementNav = [
   { id: 'herovideo', label: 'Hero Video' },
   { id: 'herosubpage', label: 'Hero Subpage' },
@@ -118,6 +128,7 @@ const ICON = {
   elements: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
   animations: '<path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/>',
   text: '<path d="M4 6h16M4 6V4h16v2M9 20h6M12 6v14"/>',
+  cta: '<path d="M5 12h14M13 6l6 6-6 6"/>',
 };
 
 const categories = [
@@ -126,6 +137,7 @@ const categories = [
   { key: 'navbars', label: 'Navbars', icon: ICON.navbars, items: navbarNav },
   { key: 'logos', label: 'Logo Clouds', icon: ICON.logos, items: logoNav },
   { key: 'bento', label: 'Bento Grids', icon: ICON.elements, items: bentoNav },
+  { key: 'cta', label: 'CTA Sections', icon: ICON.cta, items: ctaNav },
   { key: 'elements', label: 'Elements', icon: ICON.elements, items: elementNav },
   { key: 'animations', label: 'Animations', icon: ICON.animations, items: animationNav },
   { key: 'text', label: 'Text Animations', icon: ICON.text, items: textNav },
@@ -461,6 +473,44 @@ const totalCategories = categories.length;
         code={`<BentoGridIllustrated />`}
       >
         <BentoGridIllustrated />
+      </ElementShowcase>
+
+      <h2 data-section-heading class="mb-2 mt-4 font-display text-lg uppercase tracking-wide text-white/40">CTA Sections</h2>
+      <p data-section-heading class="mb-6 max-w-2xl text-sm text-white/50">
+        Three conversion sections: social-proof avatars, a live tint-preview slider (the product demos
+        itself), and cinematic light rays through glass. All end on the green quote button.
+      </p>
+
+      <ElementShowcase
+        title="CTA — Avatars"
+        importAs="CTAAvatars"
+        file="components/CTAAvatars.astro"
+        usage="Horizontal CTA with an overlapping avatar stack (hover any face for a green tooltip with name + neighborhood), 5 stars, trust count, and a gradient quote button whose arrow slides on hover. Avatars pop in staggered on scroll. Uses the 6 testimonial photos."
+        code={`<CTAAvatars />`}
+      >
+        <CTAAvatars />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="CTA — Tint Slider"
+        importAs="CTATintSlider"
+        file="components/CTATintSlider.astro"
+        usage="The product demos itself inside the CTA: drag the slider to 'apply tint' live — the room photo darkens, and the VLT (visible light transmission) readout updates in real time, from Clear to Limo. Nothing sells film like letting the visitor try it. Swap bg for any bright room photo."
+        code={`<CTATintSlider />
+
+<CTATintSlider bg="https://res.cloudinary.com/.../bright-room.png" />`}
+      >
+        <CTATintSlider />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="CTA — Light Rays"
+        importAs="CTALightRays"
+        file="components/CTALightRays.astro"
+        usage="Cinematic band: animated light rays (pure CSS, slowly drifting) pour across deep navy; a frosted-glass panel holds the headline with a shine sweep crossing it on loop. The section literally is light + glass — zero images needed."
+        code={`<CTALightRays />`}
+      >
+        <CTALightRays />
       </ElementShowcase>
 
       <h2 data-section-heading class="mb-6 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Elements</h2>
