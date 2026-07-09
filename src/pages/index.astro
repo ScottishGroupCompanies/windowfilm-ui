@@ -22,6 +22,11 @@ import LogoCloudBlurFlip from '../components/LogoCloudBlurFlip.astro';
 import LogoCloudSpotlight from '../components/LogoCloudSpotlight.astro';
 import LogoCloudSwap from '../components/LogoCloudSwap.astro';
 
+// Bento Grids
+import BentoGridPhoto from '../components/BentoGridPhoto.astro';
+import BentoGridSymmetric from '../components/BentoGridSymmetric.astro';
+import BentoGridIllustrated from '../components/BentoGridIllustrated.astro';
+
 // Elements
 import HeroVideo from '../components/HeroVideo.astro';
 import HeroSubpage from '../components/HeroSubpage.astro';
@@ -69,6 +74,11 @@ const logoNav = [
   { id: 'logocloudspotlight', label: 'Logo Cloud — Spotlight' },
   { id: 'logocloudswap', label: 'Logo Cloud — Swap' },
 ];
+const bentoNav = [
+  { id: 'bentogridphoto', label: 'Bento — Photo' },
+  { id: 'bentogridsymmetric', label: 'Bento — Symmetric' },
+  { id: 'bentogridillustrated', label: 'Bento — Illustrated' },
+];
 const elementNav = [
   { id: 'herovideo', label: 'Hero Video' },
   { id: 'herosubpage', label: 'Hero Subpage' },
@@ -115,6 +125,7 @@ const categories = [
   { key: 'testimonials', label: 'Testimonials', icon: ICON.testimonials, items: testimonialNav },
   { key: 'navbars', label: 'Navbars', icon: ICON.navbars, items: navbarNav },
   { key: 'logos', label: 'Logo Clouds', icon: ICON.logos, items: logoNav },
+  { key: 'bento', label: 'Bento Grids', icon: ICON.elements, items: bentoNav },
   { key: 'elements', label: 'Elements', icon: ICON.elements, items: elementNav },
   { key: 'animations', label: 'Animations', icon: ICON.animations, items: animationNav },
   { key: 'text', label: 'Text Animations', icon: ICON.text, items: textNav },
@@ -390,6 +401,48 @@ const totalCategories = categories.length;
         code={`<LogoCloudSwap slots={6} />`}
       >
         <LogoCloudSwap />
+      </ElementShowcase>
+
+      <h2 class="mb-2 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Bento Grids</h2>
+      <p class="mb-6 max-w-2xl text-sm text-white/50">
+        Three bento layouts: asymmetric photo grid, symmetric card grid, and an illustrated benefits
+        grid with animated SVG art drawn in code (no images needed).
+      </p>
+
+      <ElementShowcase
+        title="Bento — Photo"
+        importAs="BentoGridPhoto"
+        file="components/BentoGridPhoto.astro"
+        usage="Asymmetric bento with mixed card sizes (one large feature + smaller cards) using real Cloudinary photos. Images zoom on hover and descriptions rise in. Set span: 'lg' | 'md' | 'sm' per item to control the layout."
+        code={`<BentoGridPhoto />
+
+<!-- custom items -->
+<BentoGridPhoto items={[
+  { span: 'lg', title: 'Homes & Condos', desc: '...', img: '...', href: '/applications/homes-condos/' },
+  { span: 'sm', title: 'Offices', desc: '...', img: '...', href: '/applications/office/' },
+]} />`}
+      >
+        <BentoGridPhoto />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Bento — Symmetric"
+        importAs="BentoGridSymmetric"
+        file="components/BentoGridSymmetric.astro"
+        usage="Clean, even 3-column grid of equal cards (photo top, text bottom) that reveal with a stagger on scroll and lift with a green edge on hover. The orderly option — good for services overviews."
+        code={`<BentoGridSymmetric />`}
+      >
+        <BentoGridSymmetric />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Bento — Illustrated"
+        importAs="BentoGridIllustrated"
+        file="components/BentoGridIllustrated.astro"
+        usage="Benefits grid with animated SVG illustrations drawn in code — rotating UV sun blocked by film, thermometer cooling with fading heat waves, privacy eye behind frosting panes, and a security shield with a pulsing ring over held-together glass. No images needed; everything is inline SVG in the brand palette."
+        code={`<BentoGridIllustrated />`}
+      >
+        <BentoGridIllustrated />
       </ElementShowcase>
 
       <h2 class="mb-6 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Elements</h2>

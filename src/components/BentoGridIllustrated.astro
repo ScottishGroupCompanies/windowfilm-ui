@@ -1,0 +1,187 @@
+---
+// BentoGridIllustrated.astro
+// Benefits bento with ANIMATED SVG ILLUSTRATIONS drawn in code (no images):
+//   · UV Protection  — sun with rotating rays blocked by a film line
+//   · Energy Savings — thermometer dropping + heat waves fading
+//   · Privacy        — eye that closes behind frosted panes
+//   · Security       — shield with pulsing ring holding glass cracks
+// Each illustration animates subtly on loop; the card lifts on hover.
+// Pure CSS/SVG animations, zero libraries, brand palette.
+//
+// HOW TO USE:
+//   <BentoGridIllustrated />
+//   Copy is customizable via props; the four illustrations are fixed art.
+
+interface Props { heading?: string; sub?: string; }
+const {
+  heading = 'Why window film',
+  sub = 'Four benefits, one professional install.',
+} = Astro.props;
+---
+
+<section class="bgi">
+  <div class="bgi__head">
+    <h2 class="bgi__title font-display">{heading}</h2>
+    <p class="bgi__sub">{sub}</p>
+  </div>
+
+  <div class="bgi__grid">
+
+    <!-- UV PROTECTION -->
+    <article class="bgi__card">
+      <div class="bgi__art">
+        <svg viewBox="0 0 200 120" fill="none" aria-hidden="true">
+          <g class="bgi__sunrays" style="transform-origin: 60px 45px;">
+            <g stroke="var(--brand-green)" stroke-width="3" stroke-linecap="round" opacity="0.9">
+              <path d="M60 8v12M60 70v12M23 45h12M85 45h12M34 19l8 8M78 63l8 8M86 19l-8 8M42 63l-8 8"/>
+            </g>
+          </g>
+          <circle cx="60" cy="45" r="16" fill="var(--brand-green)"/>
+          <!-- film pane blocking rays -->
+          <rect x="120" y="12" width="66" height="96" rx="6" fill="rgba(124,179,66,0.12)" stroke="rgba(124,179,66,0.6)" stroke-width="2"/>
+          <path class="bgi__uvline" d="M78 38 H118" stroke="#fff" stroke-width="2.5" stroke-dasharray="5 5" opacity="0.7"/>
+          <path class="bgi__uvline bgi__uvline--2" d="M78 52 H118" stroke="#fff" stroke-width="2.5" stroke-dasharray="5 5" opacity="0.5"/>
+          <text x="153" y="66" text-anchor="middle" font-size="20" font-weight="800" fill="#fff" font-family="Georgia, serif">99%</text>
+        </svg>
+      </div>
+      <h3>Block 99% of UV rays</h3>
+      <p>Stops fading of floors, furniture and art — while keeping rooms bright.</p>
+    </article>
+
+    <!-- ENERGY SAVINGS -->
+    <article class="bgi__card">
+      <div class="bgi__art">
+        <svg viewBox="0 0 200 120" fill="none" aria-hidden="true">
+          <!-- heat waves fading -->
+          <g stroke="#ff8a5c" stroke-width="3" stroke-linecap="round" fill="none">
+            <path class="bgi__wave" d="M20 30 q10 -8 20 0 t20 0"/>
+            <path class="bgi__wave bgi__wave--2" d="M20 55 q10 -8 20 0 t20 0"/>
+            <path class="bgi__wave bgi__wave--3" d="M20 80 q10 -8 20 0 t20 0"/>
+          </g>
+          <!-- thermometer -->
+          <rect x="120" y="15" width="14" height="66" rx="7" fill="none" stroke="#fff" stroke-width="2.5" opacity="0.8"/>
+          <circle cx="127" cy="94" r="12" fill="none" stroke="#fff" stroke-width="2.5" opacity="0.8"/>
+          <circle cx="127" cy="94" r="7" fill="var(--brand-green)"/>
+          <rect class="bgi__mercury" x="123" y="40" width="8" height="48" rx="4" fill="var(--brand-green)"/>
+          <text x="168" y="60" text-anchor="middle" font-size="18" font-weight="800" fill="#fff" font-family="Georgia, serif">-30%</text>
+        </svg>
+      </div>
+      <h3>Cut cooling costs</h3>
+      <p>Rejects up to 80% of solar heat — most clients see savings the first summer.</p>
+    </article>
+
+    <!-- PRIVACY -->
+    <article class="bgi__card">
+      <div class="bgi__art">
+        <svg viewBox="0 0 200 120" fill="none" aria-hidden="true">
+          <!-- eye -->
+          <path d="M25 60 Q60 28 95 60 Q60 92 25 60 Z" stroke="#fff" stroke-width="2.5" fill="none" opacity="0.85"/>
+          <circle class="bgi__pupil" cx="60" cy="60" r="10" fill="var(--brand-green)"/>
+          <!-- frosted panes sliding in -->
+          <g class="bgi__panes">
+            <rect x="112" y="14" width="20" height="92" rx="4" fill="rgba(255,255,255,0.14)"/>
+            <rect x="138" y="14" width="20" height="92" rx="4" fill="rgba(255,255,255,0.2)"/>
+            <rect x="164" y="14" width="20" height="92" rx="4" fill="rgba(255,255,255,0.28)"/>
+          </g>
+        </svg>
+      </div>
+      <h3>See out, not in</h3>
+      <p>Daytime privacy for ground floors and street-facing glass — no curtains needed.</p>
+    </article>
+
+    <!-- SECURITY -->
+    <article class="bgi__card">
+      <div class="bgi__art">
+        <svg viewBox="0 0 200 120" fill="none" aria-hidden="true">
+          <!-- cracked glass held -->
+          <g stroke="rgba(255,255,255,0.5)" stroke-width="1.5">
+            <path d="M40 60 l-22 -18 M40 60 l-26 6 M40 60 l-14 24 M40 60 l6 -28 M40 60 l24 -10 M40 60 l20 18"/>
+          </g>
+          <circle cx="40" cy="60" r="4" fill="#fff" opacity="0.8"/>
+          <!-- shield -->
+          <path d="M140 18 l34 12 v26 c0 22 -15 34 -34 40 c-19 -6 -34 -18 -34 -40 v-26 z" fill="rgba(124,179,66,0.15)" stroke="var(--brand-green)" stroke-width="2.5"/>
+          <path class="bgi__check" d="M126 58 l10 10 l20 -22" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle class="bgi__pulse" cx="140" cy="58" r="46" stroke="var(--brand-green)" stroke-width="1.5" fill="none"/>
+        </svg>
+      </div>
+      <h3>Hold glass together</h3>
+      <p>Security film keeps shattered glass in place during storms and break-ins.</p>
+    </article>
+
+  </div>
+</section>
+
+<style>
+  .bgi { background: var(--ink, #0d1b2a); padding: 4rem 1.5rem; }
+  .bgi__head { max-width: 40rem; margin: 0 auto 2.5rem; text-align: center; }
+  .bgi__title { color: #fff; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; margin: 0 0 0.5rem; }
+  .bgi__sub { color: rgba(255,255,255,0.5); margin: 0; }
+
+  .bgi__grid {
+    max-width: 68rem; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;
+  }
+  .bgi__card {
+    background: var(--slate, #12293f);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1.1rem;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .bgi__card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(124,179,66,0.5);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+  }
+  .bgi__art {
+    background: rgba(13,27,42,0.6);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 0.8rem;
+    margin-bottom: 1.1rem;
+    overflow: hidden;
+  }
+  .bgi__art svg { display: block; width: 100%; height: auto; }
+  .bgi__card h3 { color: #fff; font-family: Georgia, serif; font-size: 1.15rem; margin: 0 0 0.35rem; }
+  .bgi__card p { color: rgba(255,255,255,0.55); font-size: 0.88rem; line-height: 1.55; margin: 0; }
+
+  /* --- illustration animations --- */
+  .bgi__sunrays { animation: bgi-spin 14s linear infinite; }
+  @keyframes bgi-spin { to { transform: rotate(360deg); } }
+
+  .bgi__uvline { animation: bgi-dash 1.2s linear infinite; }
+  .bgi__uvline--2 { animation-delay: 0.4s; }
+  @keyframes bgi-dash { to { stroke-dashoffset: -10; } }
+
+  .bgi__mercury { animation: bgi-cool 3.5s ease-in-out infinite alternate; transform-origin: 127px 88px; }
+  @keyframes bgi-cool { from { transform: scaleY(1); } to { transform: scaleY(0.55); } }
+  .bgi__wave { animation: bgi-fade 3.5s ease-in-out infinite alternate; }
+  .bgi__wave--2 { animation-delay: 0.5s; }
+  .bgi__wave--3 { animation-delay: 1s; }
+  @keyframes bgi-fade { from { opacity: 0.9; } to { opacity: 0.15; } }
+
+  .bgi__pupil { animation: bgi-look 5s ease-in-out infinite; }
+  @keyframes bgi-look {
+    0%, 40%, 100% { transform: translateX(0); }
+    50%, 70% { transform: translateX(8px); }
+  }
+  .bgi__panes rect { animation: bgi-frost 5s ease-in-out infinite; }
+  @keyframes bgi-frost {
+    0%, 35%, 100% { opacity: 1; }
+    55%, 75% { opacity: 0.35; }
+  }
+
+  .bgi__check { stroke-dasharray: 50; stroke-dashoffset: 50; animation: bgi-draw 2.6s ease forwards infinite; }
+  @keyframes bgi-draw { 30% { stroke-dashoffset: 0; } 80% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 50; } }
+  .bgi__pulse { opacity: 0; animation: bgi-ring 2.6s ease-out infinite; transform-origin: 140px 58px; }
+  @keyframes bgi-ring {
+    0% { opacity: 0.5; transform: scale(0.6); }
+    70% { opacity: 0; transform: scale(1.15); }
+    100% { opacity: 0; transform: scale(1.15); }
+  }
+
+  @media (max-width: 720px) { .bgi__grid { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) {
+    .bgi__sunrays, .bgi__uvline, .bgi__mercury, .bgi__wave, .bgi__pupil, .bgi__panes rect, .bgi__check, .bgi__pulse { animation: none; }
+    .bgi__check { stroke-dashoffset: 0; }
+  }
+</style>

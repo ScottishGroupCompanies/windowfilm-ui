@@ -1,0 +1,94 @@
+---
+// BentoGridSymmetric.astro
+// Even, symmetric bento — equal cards (photo top / text bottom) in a clean
+// 3-column grid. Cards lift on hover with a green edge. Reveal-on-scroll
+// stagger. Pure CSS + IntersectionObserver.
+//
+// HOW TO USE:
+//   <BentoGridSymmetric />   (default: 6 real photos)
+//   Pass items={[{title, desc, img, href}]}
+
+interface BentoItem { title: string; desc: string; img: string; href: string; }
+interface Props { heading?: string; sub?: string; items?: BentoItem[]; }
+
+const {
+  heading = 'Window film solutions for every need',
+  sub = 'Professional installation, measured and finished by certified installers.',
+  items = [
+    { title: 'Residential', desc: 'Privacy, UV and comfort for your home.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1782907661/https://res.cloudinary.com/deunehrew/image/fetch/f_webp%2Cq_auto%2Cw_600/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_175418_885cb5f7-7d7a-43f9-a1a2-33926a01abc1.png', href: '/services/residential/' },
+    { title: 'Commercial', desc: 'Energy savings for offices and retail.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1782907660/https://res.cloudinary.com/deunehrew/image/fetch/f_webp%2Cq_auto%2Cw_600/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_175417_997747da-e186-459f-83ee-82d3a284366e.png', href: '/services/commercial/' },
+    { title: 'Government & Public', desc: 'Security film institutions trust.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1782765437/https://res.cloudinary.com/deunehrew/image/fetch/f_webp%2Cfl_awebp%2Cq_auto%2Cw_600/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_163225_ef3d64e4-534f-42b3-bc9b-af78ddffac20.png', href: '/government-buildings/' },
+    { title: 'Hotels & Hospitality', desc: 'Comfort your guests can feel.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1781806377/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260618_180830_3d905ef9-c9c0-480a-86ed-7b1a99d67033.png', href: '/applications/hotel-window-film/' },
+    { title: 'Museums & Libraries', desc: 'Conservation-grade UV filtering.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1781795412/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_175446_f320deaf-2e71-4adf-917d-371be97bdf92.png', href: '/applications/museums-libraries/' },
+    { title: 'Specialty', desc: 'Decorative, anti-graffiti, and custom.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1782765436/https://res.cloudinary.com/deunehrew/image/fetch/f_webp%2Cfl_awebp%2Cq_auto%2Cw_600/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_170303_116dd402-20cd-4cc2-96fd-f34262614195.png', href: '/benefits/decorative-promotional/' },
+  ],
+} = Astro.props;
+---
+
+<section class="bgs">
+  <div class="bgs__head">
+    <h2 class="bgs__title font-display">{heading}</h2>
+    <p class="bgs__sub">{sub}</p>
+  </div>
+  <div class="bgs__grid">
+    {items.map((it, i) => (
+      <a class="bgs__card" href={it.href} style={`--d:${i * 80}ms`}>
+        <span class="bgs__img"><img src={it.img} alt={it.title} loading="lazy" /></span>
+        <span class="bgs__body">
+          <h3>{it.title}</h3>
+          <p>{it.desc}</p>
+          <span class="bgs__arrow">Learn more →</span>
+        </span>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style is:global>
+  .bgs { background: var(--ink, #0d1b2a); padding: 4rem 1.5rem; }
+  .bgs__head { max-width: 40rem; margin: 0 auto 2.5rem; text-align: center; }
+  .bgs__title { color: #fff; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; margin: 0 0 0.5rem; }
+  .bgs__sub { color: rgba(255,255,255,0.5); margin: 0; }
+
+  .bgs__grid {
+    max-width: 72rem; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
+  }
+  .bgs__card {
+    display: flex; flex-direction: column;
+    background: var(--slate, #12293f);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1rem; overflow: hidden;
+    text-decoration: none;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    transition-delay: var(--d, 0ms);
+  }
+  .bgs.is-visible .bgs__card { opacity: 1; transform: translateY(0); }
+  .bgs__card:hover {
+    border-color: rgba(124,179,66,0.5);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    transform: translateY(-4px);
+    transition-delay: 0ms;
+  }
+  .bgs__img { display: block; aspect-ratio: 16/10; overflow: hidden; }
+  .bgs__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+  .bgs__card:hover .bgs__img img { transform: scale(1.05); }
+  .bgs__body { padding: 1.25rem; }
+  .bgs__body h3 { color: #fff; font-family: Georgia, serif; font-size: 1.1rem; margin: 0 0 0.3rem; }
+  .bgs__body p { color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.5; margin: 0 0 0.75rem; }
+  .bgs__arrow { color: var(--brand-green); font-size: 0.82rem; font-weight: 600; }
+
+  @media (max-width: 860px) { .bgs__grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .bgs__grid { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) {
+    .bgs__card { opacity: 1; transform: none; transition: border-color 0.3s ease; }
+  }
+</style>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.bgs').forEach((el) => io.observe(el));
+</script>
