@@ -1,0 +1,89 @@
+---
+// TestimonialSpotlight.astro
+// A wall of review cards where a soft green spotlight follows the cursor and
+// lights up the card underneath while the others rest dim. On touch devices
+// it falls back to all cards lit. Vanilla JS sets a CSS var per card.
+//
+// HOW TO USE:
+//   <TestimonialSpotlight />   (uses shared 6 testimonials)
+
+import { testimonials as shared, type Testimonial } from '../data/testimonials';
+
+interface Props { items?: Testimonial[]; }
+const { items = shared } = Astro.props;
+---
+
+<section class="tspot">
+  <div class="tspot__grid">
+    {items.map((t) => (
+      <article class="tspot__card">
+        <div class="tspot__glow" aria-hidden="true"></div>
+        <div class="tspot__body">
+          <div class="tspot__stars">★★★★★</div>
+          <blockquote>"{t.quote}"</blockquote>
+          <figcaption>
+            <img src={t.avatar} alt={t.name} loading="lazy" />
+            <span><b>{t.name}</b><small>{t.detail}</small></span>
+          </figcaption>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .tspot { background: #0d1b2a; padding: 3rem 1.5rem; }
+  .tspot__grid {
+    max-width: 72rem; margin: 0 auto;
+    display: grid; gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  .tspot__card {
+    position: relative;
+    border-radius: 1rem;
+    padding: 1px; /* room for the border glow */
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+  .tspot__glow {
+    position: absolute;
+    left: var(--mx, 50%); top: var(--my, 50%);
+    width: 300px; height: 300px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(124,179,66,0.35), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .tspot__card:hover .tspot__glow { opacity: 1; }
+  .tspot__card:hover { transform: translateY(-4px); }
+  .tspot__body {
+    position: relative;
+    height: 100%;
+    padding: 1.75rem;
+    border-radius: calc(1rem - 1px);
+    background: #12293f;
+  }
+  .tspot__stars { color: #7CB342; letter-spacing: 2px; font-size: 0.8rem; margin-bottom: 0.6rem; }
+  .tspot__body blockquote { font-family: Georgia, serif; color: rgba(255,255,255,0.9); font-size: 1.02rem; line-height: 1.5; margin: 0 0 1.1rem; }
+  .tspot__body figcaption { display: flex; align-items: center; gap: 0.7rem; }
+  .tspot__body img { width: 44px; height: 44px; border-radius: 9999px; object-fit: cover; border: 2px solid #7CB342; }
+  .tspot__body b { display: block; color: #fff; font-size: 0.9rem; }
+  .tspot__body small { color: rgba(255,255,255,0.5); font-size: 0.75rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tspot__card, .tspot__glow { transition: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.tspot__card').forEach((card) => {
+    const glow = card.querySelector<HTMLElement>('.tspot__glow');
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      glow?.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+      glow?.style.setProperty('--my', `${e.clientY - rect.top}px`);
+    });
+  });
+</script>

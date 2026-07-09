@@ -1,0 +1,138 @@
+---
+// TestimonialStack.astro
+// Stacked testimonial cards fanned like a deck. Drag (or click) the top card
+// and it flies off, revealing the next; the deck cycles infinitely. Round
+// client photo, serif quote, brand-green accents. Pure CSS + vanilla JS.
+//
+// HOW TO USE:
+//   <TestimonialStack />                      (uses the shared 6 testimonials)
+//   <TestimonialStack items={[{name, quote, detail, avatar}, ...]} />
+
+import { testimonials as shared, type Testimonial } from '../data/testimonials';
+
+interface Props { items?: Testimonial[]; }
+const { items = shared } = Astro.props;
+---
+
+<div class="tstack">
+  <div class="tstack__deck">
+    {items.map((t, i) => (
+      <article class="tstack__card" style={`--i:${i}`} data-index={i}>
+        <div class="tstack__stars">★★★★★</div>
+        <blockquote class="tstack__quote">"{t.quote}"</blockquote>
+        <div class="tstack__person">
+          <img src={t.avatar} alt={t.name} class="tstack__avatar" draggable="false" loading="lazy" />
+          <div>
+            <div class="tstack__name">{t.name}</div>
+            <div class="tstack__detail">{t.detail}</div>
+          </div>
+        </div>
+      </article>
+    ))}
+  </div>
+  <p class="tstack__hint">Drag the top card &nbsp;·&nbsp; {items.length} reviews</p>
+</div>
+
+<style is:global>
+  .tstack { display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; }
+  .tstack__deck {
+    position: relative;
+    width: min(420px, 90vw);
+    height: 320px;
+  }
+  .tstack__card {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(160deg, #12293f, #0d1b2a);
+    border: 1px solid rgba(124,179,66,0.25);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+    cursor: grab;
+    transform-origin: bottom center;
+    transform:
+      translateY(calc(var(--i) * -12px))
+      scale(calc(1 - var(--i) * 0.04))
+      rotate(calc((var(--i) - 1) * 1.5deg));
+    z-index: calc(100 - var(--i));
+    transition: transform 0.55s cubic-bezier(0.34, 1.4, 0.64, 1), opacity 0.5s ease;
+    user-select: none;
+  }
+  .tstack__card.is-leaving {
+    transform: translateX(-140%) rotate(-16deg) !important;
+    opacity: 0;
+    cursor: grabbing;
+  }
+  .tstack__stars { color: #7CB342; letter-spacing: 2px; font-size: 0.9rem; }
+  .tstack__quote {
+    font-family: Georgia, serif;
+    font-size: 1.35rem;
+    line-height: 1.45;
+    color: #fff;
+    margin: 0;
+  }
+  .tstack__person { display: flex; align-items: center; gap: 0.85rem; }
+  .tstack__avatar {
+    width: 52px; height: 52px; border-radius: 9999px; object-fit: cover;
+    border: 2px solid #7CB342;
+    pointer-events: none;
+  }
+  .tstack__name { color: #fff; font-weight: 700; }
+  .tstack__detail { color: rgba(255,255,255,0.5); font-size: 0.8rem; }
+  .tstack__hint {
+    margin-top: 1.5rem; color: rgba(255,255,255,0.4);
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tstack__card { transition: opacity 0.3s ease; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.tstack').forEach((root) => {
+    const deck = root.querySelector<HTMLElement>('.tstack__deck')!;
+    let cards = Array.from(deck.querySelectorAll<HTMLElement>('.tstack__card'));
+    const total = cards.length;
+    let order = cards.map((_, i) => i); // front = order[0]
+
+    function render() {
+      order.forEach((cardIdx, pos) => {
+        const card = cards[cardIdx];
+        card.style.setProperty('--i', String(pos));
+        card.classList.remove('is-leaving');
+      });
+    }
+
+    function cycle() {
+      const frontIdx = order[0];
+      const front = cards[frontIdx];
+      front.classList.add('is-leaving');
+      setTimeout(() => {
+        order.push(order.shift()!); // move front to back
+        render();
+      }, 450);
+    }
+
+    // click to cycle
+    deck.addEventListener('click', () => cycle());
+
+    // drag to cycle
+    let down = false, startX = 0;
+    deck.addEventListener('mousedown', (e) => { down = true; startX = e.clientX; });
+    window.addEventListener('mouseup', (e) => {
+      if (!down) return; down = false;
+      if (startX - e.clientX > 60 || e.clientX - startX > 60) cycle();
+    });
+    deck.addEventListener('touchstart', (e) => { down = true; startX = e.touches[0].clientX; }, { passive: true });
+    window.addEventListener('touchend', (e) => {
+      if (!down) return; down = false;
+      const endX = e.changedTouches[0].clientX;
+      if (Math.abs(startX - endX) > 50) cycle();
+    });
+
+    render();
+  });
+</script>

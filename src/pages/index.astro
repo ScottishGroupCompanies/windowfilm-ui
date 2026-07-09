@@ -7,6 +7,11 @@ import BeforeAfterSlider from '../components/BeforeAfterSlider.astro';
 import FolderGallery from '../components/FolderGallery.astro';
 import GalleryBanner from '../components/GalleryBanner.astro';
 
+// Testimonials
+import TestimonialStack from '../components/TestimonialStack.astro';
+import TestimonialMarquee from '../components/TestimonialMarquee.astro';
+import TestimonialSpotlight from '../components/TestimonialSpotlight.astro';
+
 // Elements
 import HeroVideo from '../components/HeroVideo.astro';
 import HeroSubpage from '../components/HeroSubpage.astro';
@@ -38,6 +43,11 @@ const signatureNav = [
   { id: 'beforeafterslider', label: 'Before / After Slider' },
   { id: 'foldergallery', label: 'Folder Gallery' },
   { id: 'gallerybanner', label: 'Gallery Banner' },
+];
+const testimonialNav = [
+  { id: 'testimonialstack', label: 'Testimonial Stack' },
+  { id: 'testimonialmarquee', label: 'Testimonial Marquee' },
+  { id: 'testimonialspotlight', label: 'Testimonial Spotlight' },
 ];
 const elementNav = [
   { id: 'herovideo', label: 'Hero Video' },
@@ -87,6 +97,12 @@ const textNav = [
       <p class="mb-2 text-xs uppercase tracking-wide text-brand-light">Signature</p>
       <nav class="mb-6 flex flex-col gap-1 text-sm">
         {signatureNav.map((it) => (
+          <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
+        ))}
+      </nav>
+      <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Testimonials</p>
+      <nav class="mb-6 flex flex-col gap-1 text-sm">
+        {testimonialNav.map((it) => (
           <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
         ))}
       </nav>
@@ -188,6 +204,47 @@ const textNav = [
 />`}
       >
         <GalleryBanner />
+      </ElementShowcase>
+
+      <h2 class="mb-2 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Testimonials</h2>
+      <p class="mb-6 max-w-2xl text-sm text-white/50">
+        Three social-proof layouts sharing the same 6 real reviews (edit them once in
+        <code class="text-brand-light">src/data/testimonials.ts</code>). Navy cards, green accents, serif quotes.
+      </p>
+
+      <ElementShowcase
+        title="Testimonial Stack"
+        importAs="TestimonialStack"
+        file="components/TestimonialStack.astro"
+        usage="Reviews stacked like a deck of cards. Drag the top card (or click) and it flies off to reveal the next — cycles infinitely. The most engaging option, great for a focused 'what clients say' moment. Uses the shared 6 testimonials by default."
+        code={`<TestimonialStack />
+
+<!-- or pass your own -->
+<TestimonialStack items={[
+  { name: 'Sarah M.', quote: '...', detail: 'Manayunk', avatar: '/images/testimonial-5.jpg' },
+]} />`}
+      >
+        <TestimonialStack />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Testimonial Marquee"
+        importAs="TestimonialMarquee"
+        file="components/TestimonialMarquee.astro"
+        usage="Two rows of review cards sliding in opposite directions on an infinite loop; both pause on hover. Conveys 'hundreds of happy clients' at a glance. Pure CSS, no JS. Good as a full-width band between sections."
+        code={`<TestimonialMarquee />`}
+      >
+        <TestimonialMarquee />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Testimonial Spotlight"
+        importAs="TestimonialSpotlight"
+        file="components/TestimonialSpotlight.astro"
+        usage="A wall of review cards where a soft green spotlight follows the cursor and lights the card underneath. Interactive and alive — best for a dedicated reviews page. Move your mouse across the cards."
+        code={`<TestimonialSpotlight />`}
+      >
+        <TestimonialSpotlight />
       </ElementShowcase>
 
       <h2 class="mb-6 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Elements</h2>
