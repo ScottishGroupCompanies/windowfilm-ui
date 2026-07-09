@@ -1,15 +1,16 @@
 ---
 // ElementShowcase.astro
-// Wraps each catalog element: shows the live render, the import name,
-// a usage note, and the code to copy & paste.
+// Aceternity-style showcase: Preview / Code tabs, one-click "Copy all",
+// and per-block copy buttons. The Code tab shows the full snippet
+// (import + usage) ready to paste.
 //
 // Props:
-//   title    -> visible name of the element (e.g. "Logo Animation")
+//   title    -> visible name of the element
 //   importAs -> how it's imported (e.g. "LogoAnimation")
 //   file     -> file path (e.g. "components/LogoAnimation.astro")
 //   usage    -> short note: where it goes / what to change
-//   code     -> the code block the team copies & pastes
-// Default slot -> the live render of the element.
+//   code     -> the usage snippet the team copies
+//   tall     -> reserve extra space + allow overflow (dropdown menus)
 
 interface Props {
   title: string;
@@ -17,7 +18,7 @@ interface Props {
   file: string;
   usage: string;
   code: string;
-  tall?: boolean; // reserve extra space + allow overflow (for dropdown menus)
+  tall?: boolean;
 }
 
 const { title, importAs, file, usage, code, tall = false } = Astro.props;
@@ -25,53 +26,45 @@ const importLine = `import ${importAs} from '../components/${file.replace('compo
 const allCode = `---\n${importLine}\n---\n\n${code}`;
 ---
 
-<section class="mb-16 scroll-mt-24" id={importAs.toLowerCase()}>
-  <header class="mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-white/10 pb-3">
-    <h2 class="font-display text-2xl text-white">{title}</h2>
-    <code class="rounded bg-brand/15 px-2 py-0.5 font-mono text-sm text-brand-light">{`<${importAs} />`}</code>
-    <span class="font-mono text-xs text-white/40">src/{file}</span>
+<section class="showcase mb-14 scroll-mt-28" id={importAs.toLowerCase()} data-name={title.toLowerCase()}>
+  <header class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+    <h2 class="font-display text-2xl font-semibold text-white">{title}</h2>
+    <code class="rounded-md bg-brand/15 px-2 py-0.5 font-mono text-xs text-brand-light">{`<${importAs} />`}</code>
+    <span class="hidden font-mono text-xs text-white/30 md:inline">src/{file}</span>
     <button
-      class="copy-btn ml-auto rounded-md border border-brand/40 bg-brand/15 px-3 py-1 text-xs font-semibold text-brand-light transition hover:bg-brand/25"
+      class="copy-btn ml-auto rounded-lg border border-brand/40 bg-brand/15 px-3.5 py-1.5 text-xs font-semibold text-brand-light transition hover:bg-brand hover:text-ink"
       data-code-all={allCode}
     >Copy all</button>
   </header>
 
-  <p class="mb-5 max-w-2xl text-sm leading-relaxed text-white/60">{usage}</p>
+  <p class="mb-4 max-w-2xl text-sm leading-relaxed text-white/55">{usage}</p>
 
-  <!-- LIVE PREVIEW -->
-  <div class={`mb-5 rounded-xl border border-white/10 bg-ink ${tall ? 'overflow-visible' : 'overflow-hidden'}`}>
-    <div class="flex items-center gap-2 border-b border-white/10 bg-white/5 px-4 py-2">
-      <span class="h-2.5 w-2.5 rounded-full bg-white/20"></span>
-      <span class="h-2.5 w-2.5 rounded-full bg-white/20"></span>
-      <span class="h-2.5 w-2.5 rounded-full bg-white/20"></span>
-      <span class="ml-2 text-xs text-white/40">Preview</span>
+  <div class="overflow-hidden rounded-2xl border border-white/10 bg-ink shadow-2xl shadow-black/30" class:list={[tall && '!overflow-visible']}>
+    <!-- TABS -->
+    <div class="flex items-center gap-1 border-b border-white/10 bg-white/[0.03] px-3 pt-2">
+      <button class="tab-btn tab-active rounded-t-lg px-4 py-2 text-xs font-semibold" data-tab="preview">Preview</button>
+      <button class="tab-btn rounded-t-lg px-4 py-2 text-xs font-semibold" data-tab="code">Code</button>
+      <span class="ml-auto mr-2 flex gap-1.5 pb-2">
+        <span class="h-2.5 w-2.5 rounded-full bg-white/15"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-white/15"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-white/15"></span>
+      </span>
     </div>
-    <div class={tall ? 'pb-64' : 'p-0'}>
+
+    <!-- PREVIEW PANE -->
+    <div class="tab-pane tab-pane--preview" class:list={[tall ? 'pb-72' : '']}>
       <slot />
     </div>
-  </div>
 
-  <!-- IMPORT BLOCK -->
-  <div class="mb-3">
-    <p class="mb-1 text-xs uppercase tracking-wide text-white/40">1. Import at the top of your file (between the ---)</p>
-    <div class="copy-block group relative rounded-lg border border-white/10 bg-black/40">
-      <button
-        class="copy-btn absolute right-2 top-2 rounded-md border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/70 transition hover:bg-white/15"
-        data-code={importLine}
-      >Copy</button>
-      <pre class="overflow-x-auto p-4 pr-20 text-sm"><code class="font-mono text-white/80">{importLine}</code></pre>
-    </div>
-  </div>
-
-  <!-- USAGE BLOCK -->
-  <div>
-    <p class="mb-1 text-xs uppercase tracking-wide text-white/40">2. Paste where you need it</p>
-    <div class="copy-block group relative rounded-lg border border-white/10 bg-black/40">
-      <button
-        class="copy-btn absolute right-2 top-2 rounded-md border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/70 transition hover:bg-white/15"
-        data-code={code}
-      >Copy</button>
-      <pre class="overflow-x-auto p-4 pr-20 text-sm"><code class="font-mono text-white/80">{code}</code></pre>
+    <!-- CODE PANE -->
+    <div class="tab-pane tab-pane--code hidden">
+      <div class="relative">
+        <button
+          class="copy-btn absolute right-3 top-3 z-10 rounded-md border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-medium text-white/80 backdrop-blur transition hover:bg-brand hover:text-ink hover:border-brand"
+          data-code-all={allCode}
+        >Copy</button>
+        <pre class="max-h-[420px] overflow-auto p-5 text-[13px] leading-relaxed"><code class="font-mono text-white/85">{allCode}</code></pre>
+      </div>
     </div>
   </div>
 </section>

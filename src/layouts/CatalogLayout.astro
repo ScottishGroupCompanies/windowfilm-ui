@@ -30,15 +30,31 @@ const { title = 'SWF Components — Window Film UI' } = Astro.props;
         border-left-color: var(--brand-green);
         background: rgba(124,179,66,0.08);
       }
+      /* Showcase tabs */
+      .tab-btn { color: rgba(255,255,255,0.45); transition: color 0.2s, background 0.2s; }
+      .tab-btn:hover { color: rgba(255,255,255,0.8); }
+      .tab-btn.tab-active { color: #fff; background: rgba(255,255,255,0.06); box-shadow: inset 0 -2px 0 var(--brand-green); }
+      /* Search: hidden state for filtered-out items */
+      .search-hidden { display: none !important; }
+      /* Back-to-top */
+      #back-to-top { opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease; transform: translateY(8px); }
+      #back-to-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+      /* nicer scrollbars for code panes + sidebar */
+      .tab-pane--code pre::-webkit-scrollbar, aside::-webkit-scrollbar { width: 8px; height: 8px; }
+      .tab-pane--code pre::-webkit-scrollbar-thumb, aside::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
     </style>
   </head>
   <body class="bg-slate font-body text-white antialiased">
     <slot />
 
+    <!-- BACK TO TOP -->
+    <button id="back-to-top" aria-label="Back to top"
+      class="fixed bottom-6 right-6 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-brand text-ink shadow-xl shadow-black/40 hover:bg-brand-light">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </button>
+
     <script>
-      // Copy to clipboard for any .copy-btn button.
-      // Supports data-code (single block) and "copy all" buttons that carry
-      // both the import and usage in data-code-all.
+      // --- Copy buttons (single block or copy-all) ---
       document.querySelectorAll('.copy-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
           const code = btn.getAttribute('data-code-all') ?? btn.getAttribute('data-code') ?? '';
@@ -47,13 +63,56 @@ const { title = 'SWF Components — Window Film UI' } = Astro.props;
             const original = btn.textContent;
             btn.textContent = 'Copied!';
             setTimeout(() => { btn.textContent = original; }, 1500);
-          } catch {
-            btn.textContent = 'Error';
-          }
+          } catch { btn.textContent = 'Error'; }
         });
       });
 
-      // Scroll-spy: highlight the sidebar link of the section in view.
+      // --- Preview / Code tabs (per showcase) ---
+      document.querySelectorAll('.showcase').forEach((box) => {
+        const tabs = box.querySelectorAll('.tab-btn');
+        const panes = {
+          preview: box.querySelector('.tab-pane--preview'),
+          code: box.querySelector('.tab-pane--code'),
+        };
+        tabs.forEach((tab) => {
+          tab.addEventListener('click', () => {
+            tabs.forEach((t) => t.classList.remove('tab-active'));
+            tab.classList.add('tab-active');
+            const which = tab.getAttribute('data-tab');
+            panes.preview?.classList.toggle('hidden', which !== 'preview');
+            panes.code?.classList.toggle('hidden', which !== 'code');
+          });
+        });
+      });
+
+      // --- Live search filter ---
+      const searchInput = document.getElementById('catalog-search');
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          const q = searchInput.value.trim().toLowerCase();
+          // filter showcases
+          document.querySelectorAll('.showcase').forEach((s) => {
+            const name = s.getAttribute('data-name') || '';
+            s.classList.toggle('search-hidden', q !== '' && !name.includes(q));
+          });
+          // filter sidebar links
+          document.querySelectorAll('.spy-link').forEach((l) => {
+            const label = (l.textContent || '').toLowerCase();
+            l.classList.toggle('search-hidden', q !== '' && !label.includes(q));
+          });
+          // hide category headers with no visible links
+          document.querySelectorAll('[data-cat-group]').forEach((g) => {
+            const visible = g.querySelectorAll('.spy-link:not(.search-hidden)').length;
+            g.classList.toggle('search-hidden', q !== '' && visible === 0);
+          });
+          // hide category section headings in main when searching
+          document.querySelectorAll('[data-section-heading]').forEach((h) => {
+            h.classList.toggle('search-hidden', q !== '');
+          });
+        });
+      }
+
+      // --- Scroll-spy ---
       const spyLinks = document.querySelectorAll('.spy-link');
       if (spyLinks.length) {
         const byId = new Map();
@@ -63,13 +122,19 @@ const { title = 'SWF Components — Window Film UI' } = Astro.props;
             if (!entry.isIntersecting) return;
             spyLinks.forEach((l) => l.classList.remove('spy-active'));
             const link = byId.get(entry.target.id);
-            if (link) {
-              link.classList.add('spy-active');
-              link.scrollIntoView({ block: 'nearest' });
-            }
+            if (link) { link.classList.add('spy-active'); link.scrollIntoView({ block: 'nearest' }); }
           });
-        }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+        }, { rootMargin: '-15% 0px -75% 0px', threshold: 0 });
         document.querySelectorAll('section[id]').forEach((s) => spyObserver.observe(s));
+      }
+
+      // --- Back to top ---
+      const btt = document.getElementById('back-to-top');
+      if (btt) {
+        window.addEventListener('scroll', () => {
+          btt.classList.toggle('show', window.scrollY > 600);
+        }, { passive: true });
+        btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
       }
     </script>
   </body>
