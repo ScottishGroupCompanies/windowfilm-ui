@@ -20,19 +20,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Brand accent (the hero blue). Replace with the real one.
+        // Brand green — Window Film Philadelphia's accent (matches production).
         brand: {
-          DEFAULT: '#1e6fd9',
-          dark: '#0f4a99',
-          light: '#4d94e8',
+          DEFAULT: '#7CB342',
+          dark: '#5f9130',
+          light: '#8fc756',
         },
-        ink: '#0d1b2a',     // text / dark backgrounds
-        slate: '#1b2a3a',
+        ink: '#0d1b2a',     // navy — text / dark backgrounds
+        slate: '#12293f',   // lighter navy for cards
+        cream: '#ece9e4',   // light section backgrounds
       },
       fontFamily: {
-        // Replace with the site's real fonts.
-        display: ['Georgia', 'serif'],
-        body: ['system-ui', 'sans-serif'],
+        // Fraunces = characterful serif display; Inter = clean UI/body.
+        display: ['Fraunces', 'Georgia', 'serif'],
+        body: ['Inter', 'system-ui', 'sans-serif'],
       },
       keyframes: {
         marquee: {

@@ -21,6 +21,7 @@ interface Props {
 
 const { title, importAs, file, usage, code } = Astro.props;
 const importLine = `import ${importAs} from '../components/${file.replace('components/', '')}';`;
+const allCode = `---\n${importLine}\n---\n\n${code}`;
 ---
 
 <section class="mb-16 scroll-mt-24" id={importAs.toLowerCase()}>
@@ -28,6 +29,10 @@ const importLine = `import ${importAs} from '../components/${file.replace('compo
     <h2 class="font-display text-2xl text-white">{title}</h2>
     <code class="rounded bg-brand/15 px-2 py-0.5 font-mono text-sm text-brand-light">{`<${importAs} />`}</code>
     <span class="font-mono text-xs text-white/40">src/{file}</span>
+    <button
+      class="copy-btn ml-auto rounded-md border border-brand/40 bg-brand/15 px-3 py-1 text-xs font-semibold text-brand-light transition hover:bg-brand/25"
+      data-code-all={allCode}
+    >Copy all</button>
   </header>
 
   <p class="mb-5 max-w-2xl text-sm leading-relaxed text-white/60">{usage}</p>

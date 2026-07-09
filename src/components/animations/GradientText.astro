@@ -6,7 +6,7 @@
 //
 // HOW TO USE:
 //   <h2>Philadelphia's <GradientText>glass</GradientText>, transformed.</h2>
-//   <GradientText from="#7CB342" to="#0d1b2a">energy savings</GradientText>
+//   <GradientText from="var(--brand-green)" to="#0d1b2a">energy savings</GradientText>
 
 interface Props {
   from?: string;
@@ -14,7 +14,7 @@ interface Props {
   to?: string;
   speed?: number; // seconds per loop
 }
-const { from = '#7CB342', via = '#a8d06b', to = '#4a7a1f', speed = 6 } = Astro.props;
+const { from = 'var(--brand-green)', via = '#a8d06b', to = '#4a7a1f', speed = 6 } = Astro.props;
 ---
 
 <span

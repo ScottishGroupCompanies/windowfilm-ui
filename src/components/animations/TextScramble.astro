@@ -19,7 +19,7 @@ const { text, as: Tag = 'span', class: cls = '', duration = 1100 } = Astro.props
 <Tag class={`text-scramble ${cls}`} data-text={text} data-duration={duration}>{text}</Tag>
 
 <style is:global>
-  .text-scramble .scramble-char { color: #7CB342; opacity: 0.85; }
+  .text-scramble .scramble-char { color: var(--brand-green); opacity: 0.85; }
 </style>
 
 <script>

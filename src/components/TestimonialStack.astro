@@ -66,7 +66,7 @@ const { items = shared } = Astro.props;
     opacity: 0;
     cursor: grabbing;
   }
-  .tstack__stars { color: #7CB342; letter-spacing: 2px; font-size: 0.9rem; }
+  .tstack__stars { color: var(--brand-green); letter-spacing: 2px; font-size: 0.9rem; }
   .tstack__quote {
     font-family: Georgia, serif;
     font-size: 1.35rem;
@@ -77,7 +77,7 @@ const { items = shared } = Astro.props;
   .tstack__person { display: flex; align-items: center; gap: 0.85rem; }
   .tstack__avatar {
     width: 52px; height: 52px; border-radius: 9999px; object-fit: cover;
-    border: 2px solid #7CB342;
+    border: 2px solid var(--brand-green);
     pointer-events: none;
   }
   .tstack__name { color: #fff; font-weight: 700; }
