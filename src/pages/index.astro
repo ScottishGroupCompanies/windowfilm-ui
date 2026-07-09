@@ -24,6 +24,16 @@ import ScrollReveal from '../components/animations/ScrollReveal.astro';
 import WordStagger from '../components/animations/WordStagger.astro';
 import FadeInUp from '../components/animations/FadeInUp.astro';
 
+// Text Animations
+import SplitTextReveal from '../components/animations/SplitTextReveal.astro';
+import GradientText from '../components/animations/GradientText.astro';
+import Typewriter from '../components/animations/Typewriter.astro';
+import TextScramble from '../components/animations/TextScramble.astro';
+import LineMaskReveal from '../components/animations/LineMaskReveal.astro';
+import HandDrawnTitle from '../components/animations/HandDrawnTitle.astro';
+import TextLoop from '../components/animations/TextLoop.astro';
+import ShinyText from '../components/animations/ShinyText.astro';
+
 const signatureNav = [
   { id: 'beforeafterslider', label: 'Before / After Slider' },
   { id: 'foldergallery', label: 'Folder Gallery' },
@@ -46,6 +56,16 @@ const animationNav = [
   { id: 'scrollreveal', label: 'Scroll Reveal' },
   { id: 'wordstagger', label: 'Word Stagger' },
   { id: 'fadeinup', label: 'Fade In Up' },
+];
+const textNav = [
+  { id: 'splittextreveal', label: 'Split Text Reveal' },
+  { id: 'linemaskreveal', label: 'Line Mask Reveal' },
+  { id: 'gradienttext', label: 'Gradient Text' },
+  { id: 'typewriter', label: 'Typewriter' },
+  { id: 'textscramble', label: 'Text Scramble' },
+  { id: 'handdrawntitle', label: 'Hand Drawn Title' },
+  { id: 'textloop', label: 'Text Loop' },
+  { id: 'shinytext', label: 'Shiny Text' },
 ];
 ---
 
@@ -77,8 +97,14 @@ const animationNav = [
         ))}
       </nav>
       <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Animations</p>
-      <nav class="flex flex-col gap-1 text-sm">
+      <nav class="mb-6 flex flex-col gap-1 text-sm">
         {animationNav.map((it) => (
+          <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
+        ))}
+      </nav>
+      <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Text Animations</p>
+      <nav class="flex flex-col gap-1 text-sm">
+        {textNav.map((it) => (
           <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
         ))}
       </nav>
@@ -399,6 +425,131 @@ const animationNav = [
           <FadeInUp>
             <p class="font-display text-2xl text-white">This text fades up as it enters the viewport.</p>
           </FadeInUp>
+        </div>
+      </ElementShowcase>
+
+      <h2 class="mb-2 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Text Animations</h2>
+      <p class="mb-6 max-w-2xl text-sm text-white/50">
+        Headline treatments in the brand palette (green <code class="text-brand-light">#7CB342</code>, navy, cream).
+        Use one per headline — pair with a mono uppercase eyebrow for the WFP look. Scroll each into view to replay.
+      </p>
+
+      <ElementShowcase
+        title="Split Text Reveal"
+        importAs="SplitTextReveal"
+        file="components/animations/SplitTextReveal.astro"
+        usage="Headline reveals word-by-word (or char-by-char) rising from behind a clip mask as it scrolls into view. The refined version of the hero word-stagger — use it for section headlines. by='word' or 'char'."
+        code={`<SplitTextReveal
+  text="Philadelphia's glass, transformed."
+  by="word"
+  as="h2"
+  class="font-display text-4xl font-bold text-white"
+/>`}
+      >
+        <div class="p-10">
+          <SplitTextReveal text="Philadelphia's glass, transformed." by="word" as="h2" class="font-display text-4xl font-bold text-white" />
+        </div>
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Line Mask Reveal"
+        importAs="LineMaskReveal"
+        file="components/animations/LineMaskReveal.astro"
+        usage="Editorial curtain reveal — each line rises from behind a mask, staggered. You control the line breaks by passing an array. Best for big display headlines where the line breaks are intentional."
+        code={`<LineMaskReveal
+  lines={["Philadelphia's glass,", "transformed."]}
+  as="h1"
+  class="font-display text-5xl font-bold text-white"
+/>`}
+      >
+        <div class="p-10">
+          <LineMaskReveal lines={["Philadelphia's glass,", 'transformed.']} as="h2" class="font-display text-4xl font-bold leading-tight text-white" />
+        </div>
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Gradient Text"
+        importAs="GradientText"
+        file="components/animations/GradientText.astro"
+        usage="Animated green→navy gradient that sweeps across one keyword. Wrap a single word inside a normal headline — never a whole paragraph. Defaults to the brand green sweep."
+        code={`<h2 class="font-display text-4xl font-bold text-white">
+  Philadelphia's <GradientText>glass</GradientText>, transformed.
+</h2>`}
+      >
+        <div class="p-10">
+          <p class="font-display text-4xl font-bold text-white">Philadelphia's <GradientText>glass</GradientText>, transformed.</p>
+        </div>
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Typewriter"
+        importAs="Typewriter"
+        file="components/animations/Typewriter.astro"
+        usage="Types out rotating phrases with a blinking green caret, then deletes and moves on. Good for a rotating tagline. Set loop={false} and a single phrase to type once and stop."
+        code={`<Typewriter phrases={["Done right.", "Every time.", "Since 2008."]} />`}
+      >
+        <div class="p-10">
+          <span class="font-display text-3xl font-bold text-white">Window film, </span><Typewriter phrases={['done right.', 'every time.', 'since 2008.']} class="font-display text-3xl font-bold text-brand-light" />
+        </div>
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Text Scramble"
+        importAs="TextScramble"
+        file="components/animations/TextScramble.astro"
+        usage="The word arrives as scrambled glyphs (in brand green) that resolve into the real text — a techy, high-craft reveal. Fires on scroll into view. Great for a single punchy word."
+        code={`<TextScramble
+  text="Transformed."
+  as="h2"
+  class="font-display text-5xl font-bold text-white"
+/>`}
+      >
+        <div class="p-10">
+          <TextScramble text="Transformed." as="h2" class="font-display text-5xl font-bold text-white" />
+        </div>
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Hand Drawn Title"
+        importAs="HandDrawnTitle"
+        file="components/animations/HandDrawnTitle.astro"
+        usage="A hand-drawn green stroke circles (or underlines) a highlighted word as it scrolls into view — the marker-on-glass, human touch. shape='circle' or 'underline'. Use on one key word in a section headline."
+        code={`<HandDrawnTitle
+  before="Keep it"
+  highlight="cooler"
+  after="all summer."
+  shape="circle"
+/>`}
+      >
+        <div class="p-10">
+          <HandDrawnTitle before="Keep it" highlight="cooler" after="all summer." shape="circle" class="text-4xl font-bold text-white" />
+        </div>
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Text Loop"
+        importAs="TextLoop"
+        file="components/animations/TextLoop.astro"
+        usage="One word rotates in a vertical loop inside a fixed phrase — the rotating word is in brand green. Perfect for 'Keep your home ___' style headlines that cycle through benefits."
+        code={`<TextLoop
+  before="Keep your home"
+  words={["cooler", "safer", "private", "protected"]}
+/>`}
+      >
+        <div class="p-10">
+          <TextLoop before="Keep your home" words={['cooler', 'safer', 'private', 'protected']} class="text-4xl font-bold text-white" />
+        </div>
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Shiny Text"
+        importAs="ShinyText"
+        file="components/animations/ShinyText.astro"
+        usage="A subtle shine sweeps across the text in a loop, with a green glint at the peak — quiet and premium, good for a tagline or small label. tone='dark' (light text on dark) or 'light' (dark text on cream)."
+        code={`<ShinyText text="Done right, every time." tone="dark" />`}
+      >
+        <div class="p-10">
+          <ShinyText text="Done right, every time." tone="dark" class="font-display text-3xl font-bold" />
         </div>
       </ElementShowcase>
 

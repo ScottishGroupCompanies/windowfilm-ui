@@ -1,0 +1,82 @@
+---
+// TextLoop.astro
+// One word rotates in a vertical loop inside a fixed phrase — the words
+// slide up and swap on a timer ("Keep your home cooler / safer / private").
+// Pure CSS + a tiny vanilla JS timer. The rotating word uses brand green.
+//
+// HOW TO USE:
+//   <TextLoop before="Keep your home" words={["cooler","safer","private","protected"]} />
+//   interval = ms each word is shown
+
+interface Props {
+  before?: string;
+  after?: string;
+  words: string[];
+  interval?: number;
+  class?: string;
+}
+const { before = '', after = '', words, interval = 1900, class: cls = '' } = Astro.props;
+const longest = words.reduce((a, b) => (a.length >= b.length ? a : b), '');
+---
+
+<h2 class={`text-loop font-display ${cls}`} data-interval={interval}>
+  {before && <span>{before}&nbsp;</span>}
+  <span class="text-loop__slot" style={`--ch:${longest.length}`}>
+    <span class="text-loop__reel">
+      {words.map((w) => <span class="text-loop__word">{w}</span>)}
+      <span class="text-loop__word" aria-hidden="true">{words[0]}</span>
+    </span>
+    <span class="text-loop__ghost" aria-hidden="true">{longest}</span>
+  </span>
+  {after && <span>&nbsp;{after}</span>}
+</h2>
+
+<style is:global>
+  .text-loop { display: inline-flex; align-items: baseline; flex-wrap: wrap; }
+  .text-loop__slot {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    height: 1.1em;
+    vertical-align: bottom;
+    color: #7CB342;
+  }
+  .text-loop__ghost { visibility: hidden; display: inline-block; }
+  .text-loop__reel {
+    position: absolute;
+    left: 0; top: 0;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .text-loop__word { display: block; line-height: 1.1em; height: 1.1em; white-space: nowrap; }
+  @media (prefers-reduced-motion: reduce) {
+    .text-loop__reel { transition: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.text-loop').forEach((root) => {
+    const reel = root.querySelector<HTMLElement>('.text-loop__reel')!;
+    const words = reel.querySelectorAll('.text-loop__word');
+    const realCount = words.length - 1; // last is a clone of the first
+    const interval = Number(root.dataset.interval) || 1900;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+
+    let i = 0;
+    setInterval(() => {
+      i++;
+      reel.style.transition = 'transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+      reel.style.transform = `translateY(-${i * 1.1}em)`;
+      if (i === realCount) {
+        // after landing on the clone, snap back to real first word
+        setTimeout(() => {
+          reel.style.transition = 'none';
+          reel.style.transform = 'translateY(0)';
+          i = 0;
+        }, 620);
+      }
+    }, interval);
+  });
+</script>

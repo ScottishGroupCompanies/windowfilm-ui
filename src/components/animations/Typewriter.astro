@@ -1,0 +1,74 @@
+---
+// Typewriter.astro
+// Types out one or more phrases with a blinking caret, deletes, and moves
+// to the next — good for a rotating tagline ("Done right." / "Every time.").
+// Vanilla JS, no libraries. The caret uses the brand green.
+//
+// HOW TO USE:
+//   <Typewriter phrases={["Done right.", "Every time.", "Since 2008."]} />
+//   Single phrase (types once, no loop): <Typewriter phrases={["Transformed."]} loop={false} />
+
+interface Props {
+  phrases?: string[];
+  typeSpeed?: number;   // ms per character typed
+  deleteSpeed?: number; // ms per character deleted
+  pause?: number;       // ms to hold a finished phrase
+  loop?: boolean;
+  class?: string;
+}
+const {
+  phrases = ['Done right.', 'Every time.', 'Since 2008.'],
+  typeSpeed = 70,
+  deleteSpeed = 40,
+  pause = 1400,
+  loop = true,
+  class: cls = '',
+} = Astro.props;
+
+const data = JSON.stringify({ phrases, typeSpeed, deleteSpeed, pause, loop });
+---
+
+<span class={`typewriter ${cls}`} data-config={data}>
+  <span class="typewriter__text"></span><span class="typewriter__caret" aria-hidden="true"></span>
+</span>
+
+<style is:global>
+  .typewriter__caret {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    margin-left: 2px;
+    background: #7CB342;
+    transform: translateY(2px);
+    animation: typewriter-blink 1s step-end infinite;
+  }
+  @keyframes typewriter-blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .typewriter__caret { animation: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.typewriter').forEach((root) => {
+    const cfg = JSON.parse(root.dataset.config || '{}');
+    const out = root.querySelector<HTMLElement>('.typewriter__text')!;
+    const { phrases, typeSpeed, deleteSpeed, pause, loop } = cfg;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduce) { out.textContent = phrases[0]; return; }
+
+    let p = 0, c = 0, deleting = false;
+    function tick() {
+      const word = phrases[p];
+      out.textContent = word.slice(0, c);
+      if (!deleting && c < word.length) { c++; setTimeout(tick, typeSpeed); }
+      else if (!deleting && c === word.length) {
+        if (phrases.length === 1 && !loop) return;
+        deleting = true; setTimeout(tick, pause);
+      }
+      else if (deleting && c > 0) { c--; setTimeout(tick, deleteSpeed); }
+      else { deleting = false; p = (p + 1) % phrases.length; if (p === 0 && !loop) return; setTimeout(tick, typeSpeed); }
+    }
+    tick();
+  });
+</script>

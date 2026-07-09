@@ -1,0 +1,66 @@
+---
+// TextScramble.astro
+// The word arrives as scrambled glyphs that resolve into the real text —
+// a techy, high-craft reveal. Fires when it scrolls into view. Vanilla JS.
+// Uses the brand green for the still-scrambling characters.
+//
+// HOW TO USE:
+//   <TextScramble text="Transformed." as="h2" class="font-display text-5xl" />
+
+interface Props {
+  text: string;
+  as?: string;
+  class?: string;
+  duration?: number; // total ms
+}
+const { text, as: Tag = 'span', class: cls = '', duration = 1100 } = Astro.props;
+---
+
+<Tag class={`text-scramble ${cls}`} data-text={text} data-duration={duration}>{text}</Tag>
+
+<style is:global>
+  .text-scramble .scramble-char { color: #7CB342; opacity: 0.85; }
+</style>
+
+<script>
+  const CHARS = '!<>-_\\/[]{}—=+*^?#________';
+
+  function scramble(el: HTMLElement, text: string, duration: number) {
+    const frameRate = 30;
+    const totalFrames = Math.round((duration / 1000) * frameRate);
+    let frame = 0;
+    const queue = Array.from(text).map((ch, i) => ({
+      ch,
+      start: Math.floor((i / text.length) * (totalFrames * 0.5)),
+      end: Math.floor((i / text.length) * (totalFrames * 0.5)) + Math.floor(totalFrames * 0.4),
+    }));
+
+    function update() {
+      let output = '';
+      let done = 0;
+      queue.forEach((q) => {
+        if (frame >= q.end) { output += q.ch; done++; }
+        else if (frame >= q.start) {
+          const r = CHARS[Math.floor(Math.random() * CHARS.length)];
+          output += `<span class="scramble-char">${r}</span>`;
+        } else { output += `<span class="scramble-char">${CHARS[Math.floor(Math.random() * CHARS.length)]}</span>`; }
+      });
+      el.innerHTML = output;
+      if (done < queue.length) { frame++; requestAnimationFrame(update); }
+      else { el.textContent = text; }
+    }
+    update();
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target as HTMLElement;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduce) scramble(el, el.dataset.text || '', Number(el.dataset.duration) || 1100);
+      observer.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll<HTMLElement>('.text-scramble').forEach((el) => observer.observe(el));
+</script>

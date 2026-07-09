@@ -1,0 +1,62 @@
+---
+// ShinyText.astro
+// A subtle shine sweeps across the text in a loop — quiet, premium, good
+// for a tagline or a small label. Pure CSS, no JS. Works on light or dark:
+// set `tone` to match the surface.
+//
+// HOW TO USE:
+//   <ShinyText text="Done right, every time." tone="dark" />
+//   tone="dark"  → light text on dark background
+//   tone="light" → dark text on light/cream background
+
+interface Props {
+  text: string;
+  tone?: 'dark' | 'light';
+  speed?: number; // seconds
+  class?: string;
+}
+const { text, tone = 'dark', speed = 4, class: cls = '' } = Astro.props;
+---
+
+<span class={`shiny-text shiny-text--${tone} ${cls}`} style={`--shine-speed:${speed}s`}>{text}</span>
+
+<style>
+  .shiny-text {
+    display: inline-block;
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: shine var(--shine-speed, 4s) linear infinite;
+  }
+  /* light text (on dark) with a brighter sweep, tinted green at the peak */
+  .shiny-text--dark {
+    background-image: linear-gradient(110deg,
+      rgba(255,255,255,0.55) 0%,
+      rgba(255,255,255,0.55) 40%,
+      #ffffff 48%,
+      #bfe08a 50%,
+      #ffffff 52%,
+      rgba(255,255,255,0.55) 60%,
+      rgba(255,255,255,0.55) 100%);
+  }
+  /* dark text (on cream) with a subtle light sweep */
+  .shiny-text--light {
+    background-image: linear-gradient(110deg,
+      rgba(13,27,42,0.75) 0%,
+      rgba(13,27,42,0.75) 40%,
+      #0d1b2a 48%,
+      #7CB342 50%,
+      #0d1b2a 52%,
+      rgba(13,27,42,0.75) 60%,
+      rgba(13,27,42,0.75) 100%);
+  }
+  @keyframes shine {
+    from { background-position: 200% center; }
+    to   { background-position: -200% center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .shiny-text { animation: none; background-position: 0 center; }
+  }
+</style>
