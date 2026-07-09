@@ -1,0 +1,86 @@
+---
+// LogoCloudSpotlight.astro
+// A grid of grayscale brand logos. A soft green spotlight follows the cursor
+// across the whole grid, coloring/brightening the logos underneath it. On
+// touch it simply shows all logos lit. Vanilla JS sets grid-level CSS vars.
+//
+// HOW TO USE:
+//   <LogoCloudSpotlight />   (shared 12 brand logos)
+
+import { brandLogos, type BrandLogo } from '../data/logos';
+
+interface Props { heading?: string; sub?: string; items?: BrandLogo[]; }
+const {
+  heading = 'The brands we install',
+  sub = 'Move your cursor across our certified film partners.',
+  items = brandLogos,
+} = Astro.props;
+---
+
+<section class="lcs">
+  <div class="lcs__head">
+    <h2 class="lcs__title font-display">{heading}</h2>
+    <p class="lcs__sub">{sub}</p>
+  </div>
+  <div class="lcs__grid">
+    <div class="lcs__spot" aria-hidden="true"></div>
+    {items.map((logo) => (
+      <div class="lcs__cell"><img src={logo.src} alt={logo.alt} loading="lazy" /></div>
+    ))}
+  </div>
+</section>
+
+<style is:global>
+  .lcs { background: var(--ink, #0d1b2a); padding: 4rem 1.5rem; }
+  .lcs__head { text-align: center; max-width: 40rem; margin: 0 auto 2.5rem; }
+  .lcs__title { color: #fff; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 600; margin: 0 0 0.5rem; }
+  .lcs__sub { color: rgba(255,255,255,0.5); font-size: 0.95rem; margin: 0; }
+
+  .lcs__grid {
+    position: relative;
+    max-width: 64rem; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 1.5rem;
+    padding: 2rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+  .lcs__spot {
+    position: absolute;
+    left: var(--mx, -999px); top: var(--my, -999px);
+    width: 260px; height: 260px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(124,179,66,0.25), transparent 65%);
+    pointer-events: none; opacity: 0; transition: opacity 0.3s ease;
+    z-index: 0;
+  }
+  .lcs__grid:hover .lcs__spot { opacity: 1; }
+  .lcs__cell {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0.75rem;
+  }
+  .lcs__cell img {
+    max-height: 32px; max-width: 100%; object-fit: contain;
+    filter: grayscale(1) brightness(0) invert(1) opacity(0.45);
+    transition: filter 0.3s ease, transform 0.3s ease;
+  }
+  .lcs__cell:hover img { filter: none; transform: scale(1.08); }
+
+  @media (max-width: 768px) {
+    .lcs__grid { grid-template-columns: repeat(3, 1fr); }
+    .lcs__cell img { filter: grayscale(1) brightness(0) invert(1) opacity(0.7); }
+  }
+  @media (prefers-reduced-motion: reduce) { .lcs__spot { transition: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.lcs__grid').forEach((grid) => {
+    const spot = grid.querySelector<HTMLElement>('.lcs__spot');
+    grid.addEventListener('mousemove', (e) => {
+      const rect = grid.getBoundingClientRect();
+      spot?.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+      spot?.style.setProperty('--my', `${e.clientY - rect.top}px`);
+    });
+  });
+</script>

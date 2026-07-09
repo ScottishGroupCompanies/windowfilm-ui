@@ -17,6 +17,11 @@ import NavbarMegaImage from '../components/NavbarMegaImage.astro';
 import NavbarMegaIcon from '../components/NavbarMegaIcon.astro';
 import NavbarGlassPill from '../components/NavbarGlassPill.astro';
 
+// Logo Clouds
+import LogoCloudBlurFlip from '../components/LogoCloudBlurFlip.astro';
+import LogoCloudSpotlight from '../components/LogoCloudSpotlight.astro';
+import LogoCloudSwap from '../components/LogoCloudSwap.astro';
+
 // Elements
 import HeroVideo from '../components/HeroVideo.astro';
 import HeroSubpage from '../components/HeroSubpage.astro';
@@ -58,6 +63,11 @@ const navbarNav = [
   { id: 'navbarmegaimage', label: 'Navbar — Mega Image' },
   { id: 'navbarmegaicon', label: 'Navbar — Mega Icon' },
   { id: 'navbarglasspill', label: 'Navbar — Glass Pill' },
+];
+const logoNav = [
+  { id: 'logocloudblurflip', label: 'Logo Cloud — Blur Flip' },
+  { id: 'logocloudspotlight', label: 'Logo Cloud — Spotlight' },
+  { id: 'logocloudswap', label: 'Logo Cloud — Swap' },
 ];
 const elementNav = [
   { id: 'herovideo', label: 'Hero Video' },
@@ -119,6 +129,12 @@ const textNav = [
       <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Navbars</p>
       <nav class="mb-6 flex flex-col gap-1 text-sm">
         {navbarNav.map((it) => (
+          <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
+        ))}
+      </nav>
+      <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Logo Clouds</p>
+      <nav class="mb-6 flex flex-col gap-1 text-sm">
+        {logoNav.map((it) => (
           <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
         ))}
       </nav>
@@ -304,6 +320,42 @@ const textNav = [
         code={`<NavbarGlassPill active={0} />`}
       >
         <NavbarGlassPill />
+      </ElementShowcase>
+
+      <h2 class="mb-2 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Logo Clouds</h2>
+      <p class="mb-6 max-w-2xl text-sm text-white/50">
+        Three ways to show the film brands you install (3M, LLumar, Vista…), all using the real logos in
+        <code class="text-brand-light">public/images/</code> and a shared list in <code class="text-brand-light">src/data/logos.ts</code>.
+      </p>
+
+      <ElementShowcase
+        title="Logo Cloud — Blur Flip"
+        importAs="LogoCloudBlurFlip"
+        file="components/LogoCloudBlurFlip.astro"
+        usage="Logos animate in with a blur-to-focus and subtle 3D flip, staggered, when scrolled into view. They rest in grayscale and color up on hover. The premium way to open a 'trusted by' section. Scroll it into view to replay."
+        code={`<LogoCloudBlurFlip />`}
+      >
+        <LogoCloudBlurFlip />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Logo Cloud — Spotlight"
+        importAs="LogoCloudSpotlight"
+        file="components/LogoCloudSpotlight.astro"
+        usage="Grayscale logos in a grid; a soft green spotlight follows the cursor and lights up the brands underneath. Interactive and on-brand. Move your mouse across the grid."
+        code={`<LogoCloudSpotlight />`}
+      >
+        <LogoCloudSpotlight />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Logo Cloud — Swap"
+        importAs="LogoCloudSwap"
+        file="components/LogoCloudSwap.astro"
+        usage="A compact row of slots that flip on a timer to cycle through all your brands — conveys 'many partners' in little space. Slots flip at staggered times. Set slots={6} to control how many show at once."
+        code={`<LogoCloudSwap slots={6} />`}
+      >
+        <LogoCloudSwap />
       </ElementShowcase>
 
       <h2 class="mb-6 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Elements</h2>
