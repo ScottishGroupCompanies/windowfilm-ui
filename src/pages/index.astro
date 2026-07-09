@@ -97,65 +97,97 @@ const textNav = [
   { id: 'textloop', label: 'Text Loop' },
   { id: 'shinytext', label: 'Shiny Text' },
 ];
+
+// Grouped structure for the redesigned sidebar (icon + count per category).
+// Icons are inline SVG paths (stroke, currentColor) — no icon library.
+const ICON = {
+  signature: '<path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21.4 8 14 2 9.4h7.6z"/>',
+  testimonials: '<path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7l-4 3v-4.5A8.5 8.5 0 1 1 21 11.5z"/>',
+  navbars: '<rect x="3" y="5" width="18" height="4" rx="1"/><rect x="3" y="13" width="12" height="4" rx="1"/>',
+  logos: '<circle cx="7" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><circle cx="12" cy="16" r="3"/>',
+  elements: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  animations: '<path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/>',
+  text: '<path d="M4 6h16M4 6V4h16v2M9 20h6M12 6v14"/>',
+};
+
+const categories = [
+  { key: 'signature', label: 'Signature', icon: ICON.signature, items: signatureNav },
+  { key: 'testimonials', label: 'Testimonials', icon: ICON.testimonials, items: testimonialNav },
+  { key: 'navbars', label: 'Navbars', icon: ICON.navbars, items: navbarNav },
+  { key: 'logos', label: 'Logo Clouds', icon: ICON.logos, items: logoNav },
+  { key: 'elements', label: 'Elements', icon: ICON.elements, items: elementNav },
+  { key: 'animations', label: 'Animations', icon: ICON.animations, items: animationNav },
+  { key: 'text', label: 'Text Animations', icon: ICON.text, items: textNav },
+];
+
+const totalComponents = categories.reduce((n, c) => n + c.items.length, 0);
+const totalCategories = categories.length;
 ---
 
 <CatalogLayout>
-  <header class="border-b border-white/10 bg-ink">
-    <div class="mx-auto max-w-6xl px-6 py-10">
-      <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-light">Window Film Philadelphia</p>
-      <h1 class="font-display text-4xl font-bold text-white">Element Catalog</h1>
-      <p class="mt-3 max-w-2xl text-white/60">
-        Every reusable element and animation from the site lives here. Find what you need,
-        see it running, and copy the code into your page.
-        <strong class="text-white/80">Rule:</strong> new elements and animations get added here first, then used.
+  <!-- FIXED TOP BAR -->
+  <div class="sticky top-0 z-40 border-b border-white/10 bg-ink/80 backdrop-blur-md">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
+      <a href="#top" class="flex items-center gap-2.5">
+        <span class="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-ink">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+        </span>
+        <span class="font-display text-lg font-bold text-white">SWF Components</span>
+      </a>
+      <nav class="flex items-center gap-5 text-sm">
+        <a href="#components" class="hidden text-white/60 transition hover:text-white sm:block">Components</a>
+        <a href="https://windowfilmphiladelphia.net" target="_blank" rel="noopener" class="rounded-full bg-brand px-4 py-1.5 font-semibold text-ink transition hover:bg-brand-light">Live site ↗</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header id="top" class="relative overflow-hidden border-b border-white/10 bg-ink">
+    <!-- ambient green glow -->
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div class="absolute left-1/2 top-0 h-72 w-72 -translate-x-1/2 rounded-full bg-brand/20 blur-[100px]"></div>
+    </div>
+    <div class="relative mx-auto max-w-6xl px-6 py-20 text-center">
+      <p class="mb-4 inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-brand-light">
+        <span class="h-1.5 w-1.5 rounded-full bg-brand"></span> Window Film Component Library
       </p>
+      <h1 class="mx-auto max-w-3xl font-display text-5xl font-black leading-[1.05] text-white sm:text-6xl">
+        Premium UI blocks for <span class="text-brand-light">window film</span> websites.
+      </h1>
+      <p class="mx-auto mt-5 max-w-xl text-lg text-white/60">
+        A curated bank of animated, copy-paste components — built in Astro + Tailwind, zero dependencies.
+        See each one live, then copy it straight into your page.
+      </p>
+      <div class="mt-8 flex items-center justify-center gap-6 text-sm">
+        <div class="flex items-center gap-2"><span class="font-display text-2xl font-bold text-brand-light">{totalComponents}</span><span class="text-white/50">components</span></div>
+        <span class="h-8 w-px bg-white/15"></span>
+        <div class="flex items-center gap-2"><span class="font-display text-2xl font-bold text-brand-light">{totalCategories}</span><span class="text-white/50">categories</span></div>
+        <span class="h-8 w-px bg-white/15"></span>
+        <div class="flex items-center gap-2"><span class="font-display text-2xl font-bold text-brand-light">0</span><span class="text-white/50">dependencies</span></div>
+      </div>
     </div>
   </header>
 
-  <div class="mx-auto flex max-w-6xl gap-10 px-6 py-12">
-    <aside class="sticky top-12 hidden h-fit w-52 shrink-0 lg:block">
-      <p class="mb-2 text-xs uppercase tracking-wide text-brand-light">Signature</p>
-      <nav class="mb-6 flex flex-col gap-1 text-sm">
-        {signatureNav.map((it) => (
-          <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
-        ))}
-      </nav>
-      <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Testimonials</p>
-      <nav class="mb-6 flex flex-col gap-1 text-sm">
-        {testimonialNav.map((it) => (
-          <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
-        ))}
-      </nav>
-      <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Navbars</p>
-      <nav class="mb-6 flex flex-col gap-1 text-sm">
-        {navbarNav.map((it) => (
-          <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
-        ))}
-      </nav>
-      <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Logo Clouds</p>
-      <nav class="mb-6 flex flex-col gap-1 text-sm">
-        {logoNav.map((it) => (
-          <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
-        ))}
-      </nav>
-      <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Elements</p>
-      <nav class="mb-6 flex flex-col gap-1 text-sm">
-        {elementNav.map((it) => (
-          <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
-        ))}
-      </nav>
-      <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Animations</p>
-      <nav class="mb-6 flex flex-col gap-1 text-sm">
-        {animationNav.map((it) => (
-          <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
-        ))}
-      </nav>
-      <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Text Animations</p>
-      <nav class="flex flex-col gap-1 text-sm">
-        {textNav.map((it) => (
-          <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
-        ))}
-      </nav>
+  <div id="components" class="mx-auto flex max-w-6xl gap-10 px-6 py-12">
+    <!-- SIDEBAR -->
+    <aside class="sticky top-16 hidden h-[calc(100vh-5rem)] w-60 shrink-0 overflow-y-auto pb-10 lg:block">
+      <p class="mb-3 px-2 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-white/30">Browse</p>
+      {categories.map((cat) => (
+        <div class="mb-5">
+          <div class="mb-1.5 flex items-center gap-2 px-2">
+            <span class="flex h-5 w-5 items-center justify-center text-brand-light">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={cat.icon}></svg>
+            </span>
+            <span class="text-xs font-semibold uppercase tracking-[0.1em] text-white/70">{cat.label}</span>
+            <span class="ml-auto rounded-full bg-white/5 px-1.5 py-0.5 text-[0.65rem] font-medium text-white/40">{cat.items.length}</span>
+          </div>
+          <nav class="flex flex-col gap-0.5">
+            {cat.items.map((it) => (
+              <a href={`#${it.id}`} data-spy={it.id} class="spy-link rounded-md border-l-2 border-transparent px-3 py-1 text-sm text-white/50 transition hover:bg-white/5 hover:text-white">{it.label}</a>
+            ))}
+          </nav>
+        </div>
+      ))}
     </aside>
 
     <main class="min-w-0 flex-1">
@@ -224,7 +256,7 @@ const textNav = [
         code={`<GalleryBanner
   titleLines={["OUR", "WORK."]}
   eyebrow="RESIDENTIAL INSTALLS"
-  description="A collection of real installations across Philadelphia."
+  description="A collection of real installations."
   photos={[
     "https://res.cloudinary.com/.../1.png",
     "https://res.cloudinary.com/.../2.png",
@@ -367,7 +399,7 @@ const textNav = [
         usage="Main homepage hero: Cloudinary background video + headline that reveals word-by-word on load. Change eyebrow, headline, subtitle, and the video/poster URLs."
         code={`<HeroVideo
   eyebrow="PHILADELPHIA'S #1 WINDOW FILM COMPANY"
-  headline="Philadelphia's glass, transformed."
+  headline="Your glass, transformed."
   subtitle="Energy savings. UV protection. Safety & security."
   video="https://res.cloudinary.com/.../hero.mp4"
 />`}
@@ -383,7 +415,7 @@ const textNav = [
         code={`<HeroSubpage
   eyebrow="COMMERCIAL WINDOW FILM"
   title="Office buildings, cool and protected."
-  subtitle="Solar control and safety film for Philadelphia offices."
+  subtitle="Solar control and safety film for offices."
   bg="https://res.cloudinary.com/.../image.jpg"
 />`}
       >
@@ -570,13 +602,13 @@ const textNav = [
         file="components/animations/WordStagger.astro"
         usage="Reveals a heading word-by-word on load (the effect used in the hero). Each word rises + fades in, staggered. Pass the text and the tag to render."
         code={`<WordStagger
-  text="Philadelphia's glass, transformed."
+  text="Your glass, transformed."
   as="h2"
   class="font-display text-4xl font-bold text-white"
 />`}
       >
         <div class="p-10">
-          <WordStagger text="Philadelphia's glass, transformed." as="h2" class="font-display text-4xl font-bold text-white" />
+          <WordStagger text="Your glass, transformed." as="h2" class="font-display text-4xl font-bold text-white" />
         </div>
       </ElementShowcase>
 
@@ -608,14 +640,14 @@ const textNav = [
         file="components/animations/SplitTextReveal.astro"
         usage="Headline reveals word-by-word (or char-by-char) rising from behind a clip mask as it scrolls into view. The refined version of the hero word-stagger — use it for section headlines. by='word' or 'char'."
         code={`<SplitTextReveal
-  text="Philadelphia's glass, transformed."
+  text="Your glass, transformed."
   by="word"
   as="h2"
   class="font-display text-4xl font-bold text-white"
 />`}
       >
         <div class="p-10">
-          <SplitTextReveal text="Philadelphia's glass, transformed." by="word" as="h2" class="font-display text-4xl font-bold text-white" />
+          <SplitTextReveal text="Your glass, transformed." by="word" as="h2" class="font-display text-4xl font-bold text-white" />
         </div>
       </ElementShowcase>
 
@@ -625,13 +657,13 @@ const textNav = [
         file="components/animations/LineMaskReveal.astro"
         usage="Editorial curtain reveal — each line rises from behind a mask, staggered. You control the line breaks by passing an array. Best for big display headlines where the line breaks are intentional."
         code={`<LineMaskReveal
-  lines={["Philadelphia's glass,", "transformed."]}
+  lines={["Your glass,", "transformed."]}
   as="h1"
   class="font-display text-5xl font-bold text-white"
 />`}
       >
         <div class="p-10">
-          <LineMaskReveal lines={["Philadelphia's glass,", 'transformed.']} as="h2" class="font-display text-4xl font-bold leading-tight text-white" />
+          <LineMaskReveal lines={["Your glass,", 'transformed.']} as="h2" class="font-display text-4xl font-bold leading-tight text-white" />
         </div>
       </ElementShowcase>
 
@@ -641,11 +673,11 @@ const textNav = [
         file="components/animations/GradientText.astro"
         usage="Animated green→navy gradient that sweeps across one keyword. Wrap a single word inside a normal headline — never a whole paragraph. Defaults to the brand green sweep."
         code={`<h2 class="font-display text-4xl font-bold text-white">
-  Philadelphia's <GradientText>glass</GradientText>, transformed.
+  Your <GradientText>glass</GradientText>, transformed.
 </h2>`}
       >
         <div class="p-10">
-          <p class="font-display text-4xl font-bold text-white">Philadelphia's <GradientText>glass</GradientText>, transformed.</p>
+          <p class="font-display text-4xl font-bold text-white">Your <GradientText>glass</GradientText>, transformed.</p>
         </div>
       </ElementShowcase>
 

@@ -1,7 +1,7 @@
 ---
 // CatalogLayout.astro — base structure of the catalog page.
 interface Props { title?: string; }
-const { title = 'Window Film Philadelphia — Elements' } = Astro.props;
+const { title = 'SWF Components — Window Film UI' } = Astro.props;
 ---
 
 <!doctype html>
@@ -23,6 +23,12 @@ const { title = 'Window Film Philadelphia — Elements' } = Astro.props;
         --ink: #0d1b2a;
         --slate: #12293f;
         --cream: #ece9e4;
+      }
+      /* Sidebar scroll-spy active state */
+      .spy-link.spy-active {
+        color: #fff;
+        border-left-color: var(--brand-green);
+        background: rgba(124,179,66,0.08);
       }
     </style>
   </head>
@@ -46,6 +52,25 @@ const { title = 'Window Film Philadelphia — Elements' } = Astro.props;
           }
         });
       });
+
+      // Scroll-spy: highlight the sidebar link of the section in view.
+      const spyLinks = document.querySelectorAll('.spy-link');
+      if (spyLinks.length) {
+        const byId = new Map();
+        spyLinks.forEach((l) => byId.set(l.getAttribute('data-spy'), l));
+        const spyObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            spyLinks.forEach((l) => l.classList.remove('spy-active'));
+            const link = byId.get(entry.target.id);
+            if (link) {
+              link.classList.add('spy-active');
+              link.scrollIntoView({ block: 'nearest' });
+            }
+          });
+        }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+        document.querySelectorAll('section[id]').forEach((s) => spyObserver.observe(s));
+      }
     </script>
   </body>
 </html>
