@@ -12,6 +12,11 @@ import TestimonialStack from '../components/TestimonialStack.astro';
 import TestimonialMarquee from '../components/TestimonialMarquee.astro';
 import TestimonialSpotlight from '../components/TestimonialSpotlight.astro';
 
+// Navbars
+import NavbarMegaImage from '../components/NavbarMegaImage.astro';
+import NavbarMegaIcon from '../components/NavbarMegaIcon.astro';
+import NavbarGlassPill from '../components/NavbarGlassPill.astro';
+
 // Elements
 import HeroVideo from '../components/HeroVideo.astro';
 import HeroSubpage from '../components/HeroSubpage.astro';
@@ -48,6 +53,11 @@ const testimonialNav = [
   { id: 'testimonialstack', label: 'Testimonial Stack' },
   { id: 'testimonialmarquee', label: 'Testimonial Marquee' },
   { id: 'testimonialspotlight', label: 'Testimonial Spotlight' },
+];
+const navbarNav = [
+  { id: 'navbarmegaimage', label: 'Navbar — Mega Image' },
+  { id: 'navbarmegaicon', label: 'Navbar — Mega Icon' },
+  { id: 'navbarglasspill', label: 'Navbar — Glass Pill' },
 ];
 const elementNav = [
   { id: 'herovideo', label: 'Hero Video' },
@@ -103,6 +113,12 @@ const textNav = [
       <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Testimonials</p>
       <nav class="mb-6 flex flex-col gap-1 text-sm">
         {testimonialNav.map((it) => (
+          <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
+        ))}
+      </nav>
+      <p class="mb-2 text-xs uppercase tracking-wide text-white/40">Navbars</p>
+      <nav class="mb-6 flex flex-col gap-1 text-sm">
+        {navbarNav.map((it) => (
           <a href={`#${it.id}`} class="rounded px-2 py-1 text-white/60 transition hover:bg-white/5 hover:text-white">{it.label}</a>
         ))}
       </nav>
@@ -245,6 +261,49 @@ const textNav = [
         code={`<TestimonialSpotlight />`}
       >
         <TestimonialSpotlight />
+      </ElementShowcase>
+
+      <h2 class="mb-2 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Navbars</h2>
+      <p class="mb-6 max-w-2xl text-sm text-white/50">
+        Three navigation styles using the real WFP menu (Services · Applications · Benefits · Products · About)
+        with the green "Get a Free Quote" CTA. Hover the items to see the menus and the sliding pill.
+      </p>
+
+      <ElementShowcase
+        title="Navbar — Mega Image"
+        importAs="NavbarMegaImage"
+        file="components/NavbarMegaImage.astro"
+        usage="Floating pill navbar. Hover 'Services' to open an image mega-menu (Residential / Commercial / Government / Specialty) using the real category photos. Best for the main site nav where you want to show the services visually."
+        code={`<NavbarMegaImage />
+
+<!-- customize items + cards -->
+<NavbarMegaImage
+  items={[{ label: 'Services', href: '/services/', cards: [
+    { title: 'Residential', desc: '...', img: '...', href: '/services/residential/' },
+  ]}]}
+/>`}
+      >
+        <NavbarMegaImage />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Navbar — Mega Icon"
+        importAs="NavbarMegaIcon"
+        file="components/NavbarMegaIcon.astro"
+        usage="Navbar with an icon mega-menu. Hover 'Benefits' to open a compact grid of items (icon + title + short description) — ideal for long menus like Benefits (many items) where images would be too heavy. Inline SVG icons, no icon library."
+        code={`<NavbarMegaIcon />`}
+      >
+        <NavbarMegaIcon />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Navbar — Glass Pill"
+        importAs="NavbarGlassPill"
+        file="components/NavbarGlassPill.astro"
+        usage="Frosted-glass navbar (glassmorphism — it literally looks like window film) with a green pill that slides to the hovered/active item on a spring curve. No mega-menu — for simple inner pages. Hover the items to see the pill move."
+        code={`<NavbarGlassPill active={0} />`}
+      >
+        <NavbarGlassPill />
       </ElementShowcase>
 
       <h2 class="mb-6 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Elements</h2>

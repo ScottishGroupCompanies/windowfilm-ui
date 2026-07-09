@@ -1,0 +1,116 @@
+---
+// NavbarGlassPill.astro
+// Frosted-glass navbar (glassmorphism — literally looks like window film)
+// with a green pill that slides to the hovered/active item on a spring
+// curve. No mega-menu — for simple inner pages. Pure CSS + vanilla JS.
+//
+// HOW TO USE:
+//   <NavbarGlassPill />   (WFP nav; first item active by default)
+
+interface NavItem { label: string; href: string; }
+interface Props { logo?: string; items?: NavItem[]; ctaText?: string; ctaHref?: string; active?: number; }
+
+const {
+  logo = 'Window Film Philadelphia',
+  ctaText = 'Get a Free Quote',
+  ctaHref = '/contact/',
+  active = 0,
+  items = [
+    { label: 'Services', href: '/services/' },
+    { label: 'Applications', href: '/applications/' },
+    { label: 'Benefits', href: '/benefits/' },
+    { label: 'Products', href: '/products/' },
+    { label: 'About', href: '/about/' },
+  ],
+} = Astro.props;
+---
+
+<nav class="ngp">
+  <div class="ngp__bar">
+    <a href="/" class="ngp__logo">{logo}</a>
+    <ul class="ngp__items" data-active={active}>
+      <span class="ngp__pill" aria-hidden="true"></span>
+      {items.map((it, i) => (
+        <li><a href={it.href} class={`ngp__link ${i === active ? 'is-active' : ''}`} data-i={i}>{it.label}</a></li>
+      ))}
+    </ul>
+    <a href={ctaHref} class="ngp__cta">{ctaText}</a>
+  </div>
+</nav>
+
+<style is:global>
+  .ngp {
+    display: flex; justify-content: center; padding: 1.5rem;
+    /* subtle backdrop so the glass reads */
+    background: linear-gradient(120deg, #0d1b2a, #1a3350 60%, #0d1b2a);
+  }
+  .ngp__bar {
+    display: flex; align-items: center; gap: 1.5rem;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 9999px;
+    padding: 0.6rem 0.6rem 0.6rem 1.5rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .ngp__logo { color: #fff; font-family: Georgia, serif; font-weight: 700; font-size: 0.95rem; text-decoration: none; white-space: nowrap; }
+  .ngp__items { position: relative; display: flex; gap: 0.1rem; list-style: none; margin: 0; padding: 0; }
+  .ngp__pill {
+    position: absolute; top: 0; left: 0; height: 100%;
+    background: #7CB342; border-radius: 9999px;
+    transition: transform 0.42s cubic-bezier(0.34, 1.4, 0.64, 1), width 0.42s cubic-bezier(0.34, 1.4, 0.64, 1);
+    z-index: 0;
+  }
+  .ngp__link {
+    position: relative; z-index: 1; display: block;
+    padding: 0.55rem 1.1rem; border-radius: 9999px;
+    color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.9rem; font-weight: 500;
+    transition: color 0.3s; white-space: nowrap;
+  }
+  .ngp__link.is-active, .ngp__link:hover { color: #0d1b2a; font-weight: 700; }
+
+  .ngp__cta {
+    background: rgba(255,255,255,0.15); color: #fff; font-weight: 700; font-size: 0.88rem;
+    padding: 0.6rem 1.25rem; border-radius: 9999px; text-decoration: none; white-space: nowrap;
+    border: 1px solid rgba(255,255,255,0.2); transition: background 0.2s;
+  }
+  .ngp__cta:hover { background: rgba(255,255,255,0.25); }
+
+  @media (max-width: 860px) { .ngp__items { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .ngp__pill { transition: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.ngp__items').forEach((list) => {
+    const pill = list.querySelector<HTMLElement>('.ngp__pill')!;
+    const links = Array.from(list.querySelectorAll<HTMLElement>('.ngp__link'));
+    const activeIdx = Number(list.dataset.active || 0);
+
+    function moveTo(el: HTMLElement) {
+      pill.style.width = `${el.offsetWidth}px`;
+      pill.style.transform = `translateX(${el.offsetLeft}px)`;
+    }
+    function setActive(el: HTMLElement) {
+      links.forEach((l) => l.classList.remove('is-active'));
+      el.classList.add('is-active');
+      moveTo(el);
+    }
+
+    // init to active link
+    if (links[activeIdx]) moveTo(links[activeIdx]);
+
+    links.forEach((link) => {
+      link.addEventListener('mouseenter', () => moveTo(link));
+      link.addEventListener('click', (e) => { e.preventDefault(); setActive(link); });
+    });
+    list.addEventListener('mouseleave', () => {
+      const current = list.querySelector<HTMLElement>('.ngp__link.is-active');
+      if (current) moveTo(current);
+    });
+    window.addEventListener('resize', () => {
+      const current = list.querySelector<HTMLElement>('.ngp__link.is-active');
+      if (current) moveTo(current);
+    });
+  });
+</script>

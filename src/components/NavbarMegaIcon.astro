@@ -1,0 +1,117 @@
+---
+// NavbarMegaIcon.astro
+// Navbar with an ICON mega-menu — compact cards (icon + title + short desc),
+// good for long menus where images would be too heavy. Built for Benefits
+// (many items). Inline SVG icons, no icon library. Pure CSS + vanilla JS.
+// Navy panel, green accents.
+//
+// HOW TO USE:
+//   <NavbarMegaIcon />   (uses the WFP nav + Benefits mega-menu by default)
+
+interface MegaItem { title: string; desc: string; href: string; icon: string; }
+interface NavItem { label: string; href: string; items?: MegaItem[]; }
+interface Props { logo?: string; nav?: NavItem[]; ctaText?: string; ctaHref?: string; }
+
+// tiny inline icon set (stroke, currentColor)
+const I = {
+  energy: '<path d="M13 2 3 14h7l-1 8 10-12h-7z"/>',
+  uv:     '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
+  privacy:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/>',
+  glare:  '<circle cx="12" cy="12" r="5"/><path d="M12 1v3M12 20v3M4 4l2 2M18 18l2 2"/>',
+  shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+  solar:  '<rect x="3" y="4" width="18" height="12" rx="1"/><path d="M3 10h18M9 4v12M15 4v12"/>',
+  deco:   '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/>',
+};
+
+const {
+  logo = 'Window Film Philadelphia',
+  ctaText = 'Get a Free Quote',
+  ctaHref = '/contact/',
+  nav = [
+    { label: 'Services', href: '/services/' },
+    { label: 'Applications', href: '/applications/' },
+    {
+      label: 'Benefits', href: '/benefits/',
+      items: [
+        { title: 'Energy Savings', desc: 'Cut cooling costs year-round.', href: '/benefits/energy-savings/', icon: I.energy },
+        { title: 'UV Protection', desc: 'Block 99% of UV rays.', href: '/services/uv-protection-film/', icon: I.uv },
+        { title: 'Privacy Film', desc: 'See out, not in.', href: '/benefits/privacy-window-film-philadelphia/', icon: I.privacy },
+        { title: 'Glare Reduction', desc: 'End screen glare.', href: '/benefits/glare-reduction/', icon: I.glare },
+        { title: 'Safety & Security', desc: 'Hold glass together.', href: '/benefits/safety-and-security/', icon: I.shield },
+        { title: 'Solar Control', desc: 'Reject solar heat.', href: '/services/solar/', icon: I.solar },
+        { title: 'Decorative', desc: 'Frosted & branded film.', href: '/benefits/decorative-promotional/', icon: I.deco },
+        { title: 'Anti-Graffiti', desc: 'Protect your glass.', href: '/benefits/anti-graffiti/', icon: I.shield },
+      ],
+    },
+    { label: 'Products', href: '/products/' },
+    { label: 'About', href: '/about/' },
+  ],
+} = Astro.props;
+---
+
+<nav class="nmc">
+  <div class="nmc__bar">
+    <a href="/" class="nmc__logo">{logo}</a>
+    <ul class="nmc__items">
+      {nav.map((it) => (
+        <li class={`nmc__item ${it.items ? 'has-mega' : ''}`}>
+          <a href={it.href}>{it.label}{it.items && <span class="nmc__caret">▾</span>}</a>
+          {it.items && (
+            <div class="nmc__mega">
+              <div class="nmc__mega-grid">
+                {it.items.map((m) => (
+                  <a class="nmc__card" href={m.href}>
+                    <span class="nmc__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={m.icon}></svg></span>
+                    <span><b>{m.title}</b><small>{m.desc}</small></span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
+    <a href={ctaHref} class="nmc__cta">{ctaText}</a>
+  </div>
+</nav>
+
+<style is:global>
+  .nmc { display: flex; justify-content: center; padding: 1.5rem; background: #0b1622; }
+  .nmc__bar {
+    display: flex; align-items: center; gap: 1.5rem; width: min(1080px, 96vw);
+    background: #0d1b2a; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1rem; padding: 0.7rem 0.7rem 0.7rem 1.5rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  }
+  .nmc__logo { color: #fff; font-family: Georgia, serif; font-weight: 700; font-size: 0.95rem; text-decoration: none; white-space: nowrap; }
+  .nmc__items { display: flex; gap: 0.25rem; list-style: none; margin: 0 auto 0 1rem; padding: 0; }
+  .nmc__item { position: relative; }
+  .nmc__item > a { display: flex; align-items: center; gap: 0.3rem; padding: 0.55rem 1rem; border-radius: 0.6rem; color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: background 0.2s, color 0.2s; }
+  .nmc__item > a:hover { background: rgba(255,255,255,0.06); color: #fff; }
+  .nmc__caret { font-size: 0.6rem; opacity: 0.6; }
+
+  .nmc__mega {
+    position: absolute; top: calc(100% + 14px); left: 0;
+    width: min(560px, 90vw);
+    background: #0d1b2a; border: 1px solid rgba(124,179,66,0.25);
+    border-radius: 1rem; padding: 1rem;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease; z-index: 50;
+  }
+  .nmc__item.has-mega:hover .nmc__mega,
+  .nmc__item.has-mega:focus-within .nmc__mega { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
+  .nmc__mega-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+  .nmc__card { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem; border-radius: 0.7rem; text-decoration: none; transition: background 0.2s; }
+  .nmc__card:hover { background: rgba(124,179,66,0.1); }
+  .nmc__icon { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 0.6rem; background: rgba(124,179,66,0.15); color: #7CB342; flex-shrink: 0; }
+  .nmc__icon svg { width: 20px; height: 20px; }
+  .nmc__card b { display: block; color: #fff; font-size: 0.88rem; }
+  .nmc__card small { color: rgba(255,255,255,0.5); font-size: 0.76rem; }
+
+  .nmc__cta { background: #7CB342; color: #0d1b2a; font-weight: 700; font-size: 0.88rem; padding: 0.6rem 1.25rem; border-radius: 0.6rem; text-decoration: none; white-space: nowrap; transition: background 0.2s; }
+  .nmc__cta:hover { background: #8fc756; }
+
+  @media (max-width: 860px) { .nmc__items { display: none; } .nmc__bar { justify-content: space-between; } }
+  @media (prefers-reduced-motion: reduce) { .nmc__mega { transition: opacity 0.2s ease; } }
+</style>
