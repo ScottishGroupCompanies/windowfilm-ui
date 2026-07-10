@@ -32,6 +32,11 @@ import CTAAvatars from '../components/CTAAvatars.astro';
 import CTATintSlider from '../components/CTATintSlider.astro';
 import CTALightRays from '../components/CTALightRays.astro';
 
+// Team
+import TeamGridCards from '../components/TeamGridCards.astro';
+import TeamHoverReveal from '../components/TeamHoverReveal.astro';
+import TeamSpotlightCarousel from '../components/TeamSpotlightCarousel.astro';
+
 // Elements
 import HeroVideo from '../components/HeroVideo.astro';
 import HeroSubpage from '../components/HeroSubpage.astro';
@@ -89,6 +94,11 @@ const ctaNav = [
   { id: 'ctatintslider', label: 'CTA — Tint Slider' },
   { id: 'ctalightrays', label: 'CTA — Light Rays' },
 ];
+const teamNav = [
+  { id: 'teamgridcards', label: 'Team — Grid Cards' },
+  { id: 'teamhoverreveal', label: 'Team — Hover Reveal' },
+  { id: 'teamspotlightcarousel', label: 'Team — Spotlight' },
+];
 const elementNav = [
   { id: 'herovideo', label: 'Hero Video' },
   { id: 'herosubpage', label: 'Hero Subpage' },
@@ -129,6 +139,7 @@ const ICON = {
   animations: '<path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/>',
   text: '<path d="M4 6h16M4 6V4h16v2M9 20h6M12 6v14"/>',
   cta: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  team: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c2.5 0 5 1.7 5 5.5"/>',
 };
 
 const categories = [
@@ -138,6 +149,7 @@ const categories = [
   { key: 'logos', label: 'Logo Clouds', icon: ICON.logos, items: logoNav },
   { key: 'bento', label: 'Bento Grids', icon: ICON.elements, items: bentoNav },
   { key: 'cta', label: 'CTA Sections', icon: ICON.cta, items: ctaNav },
+  { key: 'team', label: 'Team', icon: ICON.team, items: teamNav },
   { key: 'elements', label: 'Elements', icon: ICON.elements, items: elementNav },
   { key: 'animations', label: 'Animations', icon: ICON.animations, items: animationNav },
   { key: 'text', label: 'Text Animations', icon: ICON.text, items: textNav },
@@ -511,6 +523,42 @@ const totalCategories = categories.length;
         code={`<CTALightRays />`}
       >
         <CTALightRays />
+      </ElementShowcase>
+
+      <h2 data-section-heading class="mb-2 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Team</h2>
+      <p data-section-heading class="mb-6 max-w-2xl text-sm text-white/50">
+        Three ways to introduce your real team, sharing the same 8 people in
+        <code class="text-brand-light">src/data/team.ts</code>. Edit once, all three stay in sync.
+      </p>
+
+      <ElementShowcase
+        title="Team — Grid Cards"
+        importAs="TeamGridCards"
+        file="components/TeamGridCards.astro"
+        usage="Clean 4-column grid — photo, name, role in green, bio. Cards lift with a green border on hover; photos desaturate slightly until hover. Closest to a classic team page, with a modern hover treatment."
+        code={`<TeamGridCards />`}
+      >
+        <TeamGridCards />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Team — Hover Reveal"
+        importAs="TeamHoverReveal"
+        file="components/TeamHoverReveal.astro"
+        usage="Large editorial portraits in grayscale; hover any face and a green-tinted overlay rises with the full bio while the name/role caption fades out. Premium, magazine-like — best for big portraits with lots of bio text."
+        code={`<TeamHoverReveal />`}
+      >
+        <TeamHoverReveal />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Team — Spotlight Carousel"
+        importAs="TeamSpotlightCarousel"
+        file="components/TeamSpotlightCarousel.astro"
+        usage="One large spotlight profile (photo + full bio) with a row of clickable thumbnails to switch between team members. Personal and readable — good for a 'meet the leadership' moment. Click any thumbnail below."
+        code={`<TeamSpotlightCarousel />`}
+      >
+        <TeamSpotlightCarousel />
       </ElementShowcase>
 
       <h2 data-section-heading class="mb-6 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Elements</h2>

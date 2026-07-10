@@ -1,0 +1,64 @@
+---
+// TeamGridCards.astro
+// Clean grid of team cards — photo, name, role (in brand green), bio.
+// Cards lift and get a green border on hover, photo desaturates slightly
+// until hover for a subtle premium feel. Closely follows the real team
+// page layout but with a modern hover treatment. Pure CSS.
+//
+// HOW TO USE:
+//   <TeamGridCards />   (uses the shared 8 team members)
+
+import { team as shared, type TeamMember } from '../data/team';
+
+interface Props { heading?: string; sub?: string; members?: TeamMember[]; }
+const {
+  heading = 'Your dedicated project team',
+  sub = 'Real people, decades of combined experience, one point of contact from quote to install.',
+  members = shared,
+} = Astro.props;
+---
+
+<section class="tgc">
+  <div class="tgc__head">
+    <h2 class="tgc__title font-display">{heading}</h2>
+    <p class="tgc__sub">{sub}</p>
+  </div>
+  <div class="tgc__grid">
+    {members.map((m) => (
+      <article class="tgc__card">
+        <div class="tgc__photo"><img src={m.photo} alt={m.name} loading="lazy" /></div>
+        <h3>{m.name}</h3>
+        <p class="tgc__role">{m.role}</p>
+        <p class="tgc__bio">{m.bio}</p>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .tgc { background: var(--ink, #0d1b2a); padding: 4rem 1.5rem; }
+  .tgc__head { max-width: 40rem; margin: 0 auto 2.5rem; text-align: center; }
+  .tgc__title { color: #fff; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; margin: 0 0 0.5rem; }
+  .tgc__sub { color: rgba(255,255,255,0.5); margin: 0; }
+
+  .tgc__grid {
+    max-width: 72rem; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem;
+  }
+  .tgc__card {
+    background: var(--slate, #12293f);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1rem; padding: 1.25rem;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .tgc__card:hover { transform: translateY(-4px); border-color: rgba(124,179,66,0.5); box-shadow: 0 16px 36px rgba(0,0,0,0.35); }
+  .tgc__photo { aspect-ratio: 1; border-radius: 0.75rem; overflow: hidden; margin-bottom: 0.9rem; }
+  .tgc__photo img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85); transition: filter 0.3s ease, transform 0.4s ease; }
+  .tgc__card:hover .tgc__photo img { filter: saturate(1); transform: scale(1.04); }
+  .tgc__card h3 { color: #fff; font-family: Georgia, serif; font-size: 1.05rem; margin: 0 0 0.15rem; }
+  .tgc__role { color: var(--brand-green); font-size: 0.78rem; font-weight: 600; margin: 0 0 0.5rem; }
+  .tgc__bio { color: rgba(255,255,255,0.5); font-size: 0.8rem; line-height: 1.5; margin: 0; }
+
+  @media (max-width: 900px) { .tgc__grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .tgc__grid { grid-template-columns: 1fr; } }
+</style>
