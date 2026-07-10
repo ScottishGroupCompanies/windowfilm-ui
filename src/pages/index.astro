@@ -37,6 +37,11 @@ import TeamGridCards from '../components/TeamGridCards.astro';
 import TeamHoverReveal from '../components/TeamHoverReveal.astro';
 import TeamSpotlightCarousel from '../components/TeamSpotlightCarousel.astro';
 
+// Maps
+import ServiceAreaMap from '../components/ServiceAreaMap.astro';
+import CoveragePinMap from '../components/CoveragePinMap.astro';
+import ProcessRoadmap from '../components/ProcessRoadmap.astro';
+
 // Elements
 import HeroVideo from '../components/HeroVideo.astro';
 import HeroSubpage from '../components/HeroSubpage.astro';
@@ -99,6 +104,11 @@ const teamNav = [
   { id: 'teamhoverreveal', label: 'Team — Hover Reveal' },
   { id: 'teamspotlightcarousel', label: 'Team — Spotlight' },
 ];
+const mapNav = [
+  { id: 'serviceareamap', label: 'Map — Service Area' },
+  { id: 'coveragepinmap', label: 'Map — Coverage Pins' },
+  { id: 'processroadmap', label: 'Map — Process Roadmap' },
+];
 const elementNav = [
   { id: 'herovideo', label: 'Hero Video' },
   { id: 'herosubpage', label: 'Hero Subpage' },
@@ -140,6 +150,7 @@ const ICON = {
   text: '<path d="M4 6h16M4 6V4h16v2M9 20h6M12 6v14"/>',
   cta: '<path d="M5 12h14M13 6l6 6-6 6"/>',
   team: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c2.5 0 5 1.7 5 5.5"/>',
+  maps: '<path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3zM9 3v15M15 6v15"/>',
 };
 
 const categories = [
@@ -150,6 +161,7 @@ const categories = [
   { key: 'bento', label: 'Bento Grids', icon: ICON.elements, items: bentoNav },
   { key: 'cta', label: 'CTA Sections', icon: ICON.cta, items: ctaNav },
   { key: 'team', label: 'Team', icon: ICON.team, items: teamNav },
+  { key: 'maps', label: 'Maps', icon: ICON.maps, items: mapNav },
   { key: 'elements', label: 'Elements', icon: ICON.elements, items: elementNav },
   { key: 'animations', label: 'Animations', icon: ICON.animations, items: animationNav },
   { key: 'text', label: 'Text Animations', icon: ICON.text, items: textNav },
@@ -559,6 +571,47 @@ const totalCategories = categories.length;
         code={`<TeamSpotlightCarousel />`}
       >
         <TeamSpotlightCarousel />
+      </ElementShowcase>
+
+      <h2 data-section-heading class="mb-2 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Maps</h2>
+      <p data-section-heading class="mb-6 max-w-2xl text-sm text-white/50">
+        Three ways to show coverage and process for the Greater Philadelphia region — all pure SVG,
+        no map libraries. Edit the cities/steps via props.
+      </p>
+
+      <ElementShowcase
+        title="Map — Service Area"
+        importAs="ServiceAreaMap"
+        file="components/ServiceAreaMap.astro"
+        usage="Dotted regional map with animated green arcs drawing from your HQ out to each served city, plus pulsing location dots. The 'wow' coverage map. Pass hq and cities as {name, x, y} in 0–800 / 0–450 SVG units."
+        code={`<ServiceAreaMap />
+
+<ServiceAreaMap
+  hq={{ name: 'Philadelphia HQ', x: 400, y: 235 }}
+  cities={[{ name: 'Main Line', x: 300, y: 205 }]}
+/>`}
+      >
+        <ServiceAreaMap />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Map — Coverage Pins"
+        importAs="CoveragePinMap"
+        file="components/CoveragePinMap.astro"
+        usage="Location pins drop in (staggered) over each served city; hover or focus a pin for a green tooltip with the city name and a stat. Best for a 'Cities We Serve' block. Each city: {name, stat, x, y}."
+        code={`<CoveragePinMap />`}
+      >
+        <CoveragePinMap />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Map — Process Roadmap"
+        importAs="ProcessRoadmap"
+        file="components/ProcessRoadmap.astro"
+        usage="A winding route that draws itself on scroll, connecting the 4 steps of your service process (Consultation → Measurement → Installation → Warranty). Milestones pop in as the path reaches them; stacks vertically on mobile. Steps are editable via props."
+        code={`<ProcessRoadmap />`}
+      >
+        <ProcessRoadmap />
       </ElementShowcase>
 
       <h2 data-section-heading class="mb-6 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Elements</h2>

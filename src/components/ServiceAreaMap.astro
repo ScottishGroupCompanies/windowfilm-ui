@@ -1,0 +1,130 @@
+---
+// ServiceAreaMap.astro
+// Dotted regional map (Greater Philadelphia) with animated green arcs that
+// draw from the HQ pin out to each served city, plus pulsing location dots.
+// Inspired by Aceternity's WorldMap but rebuilt with a hand-plotted dot grid
+// and pure SVG animation — no dotted-map lib, no Framer Motion, no theme dep.
+//
+// HOW TO USE:
+//   <ServiceAreaMap />
+//   Cities + HQ are props; coordinates are simple 0–800 / 0–450 SVG units.
+
+interface City { name: string; x: number; y: number; }
+interface Props {
+  heading?: string; sub?: string;
+  hq?: { name: string; x: number; y: number };
+  cities?: City[];
+}
+const {
+  heading = 'Areas we serve',
+  sub = 'Serving Philadelphia, the Main Line, Cherry Hill, South Jersey & surrounding areas.',
+  hq = { name: 'Philadelphia HQ', x: 400, y: 235 },
+  cities = [
+    { name: 'Main Line', x: 300, y: 205 },
+    { name: 'Cherry Hill', x: 500, y: 260 },
+    { name: 'South Jersey', x: 545, y: 320 },
+    { name: 'Doylestown', x: 380, y: 120 },
+    { name: 'Wilmington', x: 250, y: 340 },
+  ],
+} = Astro.props;
+
+// build a diagonal dot grid across the viewBox
+const dots: { x: number; y: number }[] = [];
+for (let gx = 20; gx < 800; gx += 22) {
+  for (let gy = 20; gy < 450; gy += 22) {
+    const off = (Math.floor(gx / 22) % 2) * 11;
+    dots.push({ x: gx, y: gy + off });
+  }
+}
+
+const arc = (a: {x:number;y:number}, b: {x:number;y:number}) => {
+  const mx = (a.x + b.x) / 2;
+  const my = Math.min(a.y, b.y) - 55;
+  return `M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`;
+};
+---
+
+<section class="sam">
+  <div class="sam__head">
+    <h2 class="sam__title font-display">{heading}</h2>
+    <p class="sam__sub">{sub}</p>
+  </div>
+
+  <div class="sam__map">
+    <svg viewBox="0 0 800 450" class="sam__svg" role="img" aria-label="Service area map">
+      <!-- dot grid -->
+      <g class="sam__dots">
+        {dots.map((d) => <circle cx={d.x} cy={d.y} r="1.6" />)}
+      </g>
+
+      <defs>
+        <linearGradient id="samArc" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="var(--brand-green)" stop-opacity="0" />
+          <stop offset="12%" stop-color="var(--brand-green)" stop-opacity="1" />
+          <stop offset="88%" stop-color="var(--brand-green)" stop-opacity="1" />
+          <stop offset="100%" stop-color="var(--brand-green)" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+
+      <!-- arcs HQ -> city -->
+      {cities.map((c, i) => (
+        <path class="sam__arc" style={`--i:${i}`} d={arc(hq, c)} fill="none" stroke="url(#samArc)" stroke-width="2" stroke-linecap="round" />
+      ))}
+
+      <!-- city pins -->
+      {cities.map((c) => (
+        <g class="sam__pin">
+          <circle cx={c.x} cy={c.y} r="4" fill="var(--brand-green)" />
+          <circle class="sam__ping" cx={c.x} cy={c.y} r="4" fill="var(--brand-green)" />
+          <text x={c.x} y={c.y - 12} text-anchor="middle" class="sam__label">{c.name}</text>
+        </g>
+      ))}
+
+      <!-- HQ pin (bigger, white ring) -->
+      <g>
+        <circle cx={hq.x} cy={hq.y} r="7" fill="var(--brand-green)" stroke="#fff" stroke-width="2.5" />
+        <circle class="sam__ping" cx={hq.x} cy={hq.y} r="7" fill="var(--brand-green)" />
+        <text x={hq.x} y={hq.y - 16} text-anchor="middle" class="sam__label sam__label--hq">{hq.name}</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<style>
+  .sam { background: var(--ink, #0d1b2a); padding: 4rem 1.5rem; }
+  .sam__head { max-width: 42rem; margin: 0 auto 2rem; text-align: center; }
+  .sam__title { color: #fff; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; margin: 0 0 0.5rem; }
+  .sam__sub { color: rgba(255,255,255,0.5); margin: 0; }
+  .sam__map { max-width: 60rem; margin: 0 auto; }
+  .sam__svg { width: 100%; height: auto; display: block; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent); }
+  .sam__dots circle { fill: rgba(255,255,255,0.18); }
+
+  .sam__arc {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: sam-draw 1.4s ease-out forwards;
+    animation-delay: calc(var(--i) * 0.45s + 0.3s);
+    pathLength: 1;
+  }
+  @keyframes sam-draw { to { stroke-dashoffset: 0; } }
+
+  .sam__ping { opacity: 0.55; transform-box: fill-box; transform-origin: center; animation: sam-ping 1.8s ease-out infinite; }
+  @keyframes sam-ping { 0% { transform: scale(1); opacity: 0.55; } 70%,100% { transform: scale(3); opacity: 0; } }
+
+  .sam__label { fill: rgba(255,255,255,0.85); font-size: 13px; font-weight: 600; font-family: system-ui, sans-serif; }
+  .sam__label--hq { fill: #fff; font-size: 14px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sam__arc { animation: none; stroke-dashoffset: 0; }
+    .sam__ping { animation: none; opacity: 0; }
+  }
+</style>
+
+<script>
+  // set pathLength-based dash so the stroke draws regardless of arc length
+  document.querySelectorAll<SVGPathElement>('.sam__arc').forEach((p) => {
+    const len = p.getTotalLength();
+    p.style.strokeDasharray = String(len);
+    p.style.strokeDashoffset = String(len);
+  });
+</script>

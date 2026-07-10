@@ -1,0 +1,96 @@
+---
+// CoveragePinMap.astro
+// A cleaner regional map where location pins DROP in (staggered) over each
+// served city. Hover a pin to raise a tooltip with the city name + a stat.
+// Good for a "Cities We Serve" block. Pure CSS/SVG animation.
+//
+// HOW TO USE:
+//   <CoveragePinMap />
+//   Each city: { name, stat, x, y } in 0–800 / 0–450 SVG units.
+
+interface City { name: string; stat: string; x: number; y: number; }
+interface Props { heading?: string; sub?: string; cities?: City[]; }
+const {
+  heading = 'Cities we serve',
+  sub = 'Certified installers across the Greater Philadelphia region.',
+  cities = [
+    { name: 'Philadelphia', stat: '900+ installs', x: 400, y: 235 },
+    { name: 'Main Line', stat: '300+ installs', x: 300, y: 205 },
+    { name: 'Cherry Hill', stat: '180+ installs', x: 500, y: 260 },
+    { name: 'South Jersey', stat: '220+ installs', x: 545, y: 320 },
+    { name: 'Doylestown', stat: '120+ installs', x: 380, y: 120 },
+    { name: 'Wilmington', stat: '140+ installs', x: 250, y: 340 },
+  ],
+} = Astro.props;
+
+const dots: { x: number; y: number }[] = [];
+for (let gx = 20; gx < 800; gx += 24) {
+  for (let gy = 20; gy < 450; gy += 24) {
+    dots.push({ x: gx, y: gy });
+  }
+}
+---
+
+<section class="cpm">
+  <div class="cpm__head">
+    <h2 class="cpm__title font-display">{heading}</h2>
+    <p class="cpm__sub">{sub}</p>
+  </div>
+
+  <div class="cpm__map">
+    <svg viewBox="0 0 800 450" class="cpm__svg" role="img" aria-label="Cities we serve">
+      <g class="cpm__dots">
+        {dots.map((d) => <circle cx={d.x} cy={d.y} r="1.4" />)}
+      </g>
+
+      {cities.map((c, i) => (
+        <g class="cpm__pin" style={`--i:${i}`} tabindex="0">
+          <!-- tooltip -->
+          <g class="cpm__tip" transform={`translate(${c.x}, ${c.y - 46})`}>
+            <rect x="-58" y="-26" width="116" height="40" rx="8" fill="var(--brand-green)" />
+            <text x="0" y="-9" text-anchor="middle" class="cpm__tip-name">{c.name}</text>
+            <text x="0" y="7" text-anchor="middle" class="cpm__tip-stat">{c.stat}</text>
+            <path d="M -6 13 L 6 13 L 0 21 Z" fill="var(--brand-green)" />
+          </g>
+          <!-- teardrop pin -->
+          <path class="cpm__drop"
+            d={`M ${c.x} ${c.y} C ${c.x - 11} ${c.y - 16}, ${c.x - 9} ${c.y - 30}, ${c.x} ${c.y - 30} C ${c.x + 9} ${c.y - 30}, ${c.x + 11} ${c.y - 16}, ${c.x} ${c.y} Z`}
+            fill="var(--brand-green)" stroke="#fff" stroke-width="1.5" />
+          <circle cx={c.x} cy={c.y - 20} r="4" fill="#fff" />
+          <ellipse class="cpm__shadow" cx={c.x} cy={c.y + 4} rx="7" ry="2.5" fill="rgba(0,0,0,0.35)" />
+        </g>
+      ))}
+    </svg>
+  </div>
+</section>
+
+<style is:global>
+  .cpm { background: var(--slate, #12293f); padding: 4rem 1.5rem; }
+  .cpm__head { max-width: 42rem; margin: 0 auto 2rem; text-align: center; }
+  .cpm__title { color: #fff; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; margin: 0 0 0.5rem; }
+  .cpm__sub { color: rgba(255,255,255,0.5); margin: 0; }
+  .cpm__map { max-width: 60rem; margin: 0 auto; }
+  .cpm__svg { width: 100%; height: auto; display: block; }
+  .cpm__dots circle { fill: rgba(255,255,255,0.12); }
+
+  .cpm__pin { cursor: pointer; outline: none; }
+  .cpm__drop, .cpm__pin circle, .cpm__shadow {
+    opacity: 0;
+    animation: cpm-drop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: calc(var(--i) * 0.15s + 0.2s);
+    transform-box: fill-box; transform-origin: center bottom;
+  }
+  @keyframes cpm-drop {
+    0% { opacity: 0; transform: translateY(-40px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .cpm__tip { opacity: 0; transition: opacity 0.25s ease, transform 0.25s ease; transform: translateY(4px); pointer-events: none; }
+  .cpm__pin:hover .cpm__tip, .cpm__pin:focus .cpm__tip { opacity: 1; transform: translateY(0); }
+  .cpm__pin:hover .cpm__drop { filter: drop-shadow(0 4px 10px rgba(124,179,66,0.6)); }
+  .cpm__tip-name { fill: var(--ink, #0d1b2a); font-size: 13px; font-weight: 700; font-family: system-ui, sans-serif; }
+  .cpm__tip-stat { fill: rgba(13,27,42,0.75); font-size: 11px; font-weight: 600; font-family: system-ui, sans-serif; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cpm__drop, .cpm__pin circle, .cpm__shadow { opacity: 1; animation: none; }
+  }
+</style>
