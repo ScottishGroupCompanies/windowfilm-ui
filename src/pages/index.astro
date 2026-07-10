@@ -42,6 +42,11 @@ import ServiceAreaMap from '../components/ServiceAreaMap.astro';
 import CoveragePinMap from '../components/CoveragePinMap.astro';
 import ProcessRoadmap from '../components/ProcessRoadmap.astro';
 
+// Blog
+import BlogIndex from '../components/BlogIndex.astro';
+import BlogPostCentered from '../components/BlogPostCentered.astro';
+import BlogPostTOC from '../components/BlogPostTOC.astro';
+
 // Elements
 import HeroVideo from '../components/HeroVideo.astro';
 import HeroSubpage from '../components/HeroSubpage.astro';
@@ -109,6 +114,11 @@ const mapNav = [
   { id: 'coveragepinmap', label: 'Map — Coverage Pins' },
   { id: 'processroadmap', label: 'Map — Process Roadmap' },
 ];
+const blogNav = [
+  { id: 'blogindex', label: 'Blog — Index' },
+  { id: 'blogpostcentered', label: 'Blog — Post (Centered)' },
+  { id: 'blogposttoc', label: 'Blog — Post (with TOC)' },
+];
 const elementNav = [
   { id: 'herovideo', label: 'Hero Video' },
   { id: 'herosubpage', label: 'Hero Subpage' },
@@ -151,6 +161,7 @@ const ICON = {
   cta: '<path d="M5 12h14M13 6l6 6-6 6"/>',
   team: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c2.5 0 5 1.7 5 5.5"/>',
   maps: '<path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3zM9 3v15M15 6v15"/>',
+  blog: '<path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h5"/>',
 };
 
 const categories = [
@@ -162,6 +173,7 @@ const categories = [
   { key: 'cta', label: 'CTA Sections', icon: ICON.cta, items: ctaNav },
   { key: 'team', label: 'Team', icon: ICON.team, items: teamNav },
   { key: 'maps', label: 'Maps', icon: ICON.maps, items: mapNav },
+  { key: 'blog', label: 'Blog', icon: ICON.blog, items: blogNav },
   { key: 'elements', label: 'Elements', icon: ICON.elements, items: elementNav },
   { key: 'animations', label: 'Animations', icon: ICON.animations, items: animationNav },
   { key: 'text', label: 'Text Animations', icon: ICON.text, items: textNav },
@@ -612,6 +624,55 @@ const totalCategories = categories.length;
         code={`<ProcessRoadmap />`}
       >
         <ProcessRoadmap />
+      </ElementShowcase>
+
+      <h2 data-section-heading class="mb-2 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Blog</h2>
+      <p data-section-heading class="mb-6 max-w-2xl text-sm text-white/50">
+        A complete blog kit sharing 6 real SEO posts in <code class="text-brand-light">src/data/posts.ts</code>:
+        the listing page plus two article layouts (centered, and with a sticky table of contents).
+      </p>
+
+      <ElementShowcase
+        title="Blog — Index"
+        importAs="BlogIndex"
+        file="components/BlogIndex.astro"
+        usage="The /blog listing: a featured lead post + a grid of article cards (hero, category chip, title, excerpt, author, date, read time). Cards reveal on scroll and lift with a green edge on hover. Reads from posts.ts — the first post is the featured lead."
+        code={`<BlogIndex />`}
+      >
+        <BlogIndex />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Blog — Post (Centered)"
+        importAs="BlogPostCentered"
+        file="components/BlogPostCentered.astro"
+        usage="A single article, centered reading layout: hero, category, title, byline, a styled body (headings, lists, green pull-quote) and a CTA at the end. Pass post={...} for meta and write the article inside the default slot as HTML. Shows a sample article if no slot is given."
+        code={`<BlogPostCentered post={posts[0]}>
+  <h2>Introduction</h2>
+  <p>Your article content…</p>
+  <blockquote>A highlighted quote</blockquote>
+</BlogPostCentered>`}
+      >
+        <BlogPostCentered />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Blog — Post (with TOC)"
+        importAs="BlogPostTOC"
+        file="components/BlogPostTOC.astro"
+        usage="Long-form article with a sticky Table of Contents (scroll-spy highlights the active section) and a reading-progress bar at the top. Pass sections={[{id,label}]} matching your body's h2 ids. Best for in-depth SEO guides. Collapses the TOC to pills on mobile."
+        code={`<BlogPostTOC
+  post={posts[1]}
+  sections={[
+    { id: 'intro', label: 'Introduction' },
+    { id: 'heat', label: 'The heat problem' },
+  ]}
+>
+  <h2 id="intro">Introduction</h2>
+  <p>…</p>
+</BlogPostTOC>`}
+      >
+        <BlogPostTOC />
       </ElementShowcase>
 
       <h2 data-section-heading class="mb-6 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Elements</h2>

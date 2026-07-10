@@ -1,0 +1,108 @@
+---
+// BlogPostCentered.astro
+// A single blog post, centered reading layout: hero image, category, title,
+// author + date + read time, then a styled article body (headings, lists,
+// a green pull-quote, image) and a CTA at the end. The body is passed via
+// the default <slot>, so the team writes normal HTML/markdown-rendered
+// content inside. Reads post meta from props (defaults to first post).
+//
+// HOW TO USE:
+//   <BlogPostCentered post={posts[0]}>
+//     <h2>Introduction</h2>
+//     <p>...</p>
+//     <blockquote>...</blockquote>
+//   </BlogPostCentered>
+//   With no slot content, a sample article is shown.
+
+import { posts, type BlogPost } from '../data/posts';
+
+interface Props { post?: BlogPost; }
+const { post = posts[0] } = Astro.props;
+---
+
+<article class="post">
+  <div class="post__hero"><img src={post.hero} alt={post.title} /></div>
+
+  <div class="post__container">
+    <header class="post__header">
+      <span class="post__chip">{post.category}</span>
+      <h1 class="post__title font-display">{post.title}</h1>
+      <div class="post__byline">
+        <img src={post.author.avatar} alt={post.author.name} />
+        <span><b>{post.author.name}</b><small>{post.date} · {post.readMins} min read</small></span>
+      </div>
+    </header>
+
+    <div class="post__body">
+      <slot>
+        <h2>Introduction</h2>
+        <p>Window film is one of the highest-return upgrades you can make to a home or building — but the options can be confusing. In this guide we break down exactly what matters, so you can make a confident decision.</p>
+        <h3>What actually drives the result</h3>
+        <ul>
+          <li><strong>Heat rejection</strong> — how much solar energy the film blocks.</li>
+          <li><strong>UV protection</strong> — quality films block 99% of UV rays.</li>
+          <li><strong>Visible light</strong> — how bright the room stays afterward.</li>
+        </ul>
+        <blockquote>"The right film pays for itself in comfort and energy savings — usually within the first few summers."</blockquote>
+        <p>Every building is different, which is why we always start with a free on-site assessment before recommending a specific film.</p>
+        <h2>The bottom line</h2>
+        <p>Choose a certified installer, insist on a real warranty, and match the film to your specific glass and orientation. Done right, it is an upgrade you notice every single day.</p>
+      </slot>
+    </div>
+
+    <div class="post__cta">
+      <h3 class="font-display">Ready to transform your glass?</h3>
+      <p>Free consultation, transparent pricing, lifetime warranty.</p>
+      <a href="/contact/" class="post__cta-btn">Get a Free Quote →</a>
+    </div>
+  </div>
+</article>
+
+<style is:global>
+  .post { background: var(--ink, #0d1b2a); padding-bottom: 4rem; }
+  .post__hero { width: 100%; aspect-ratio: 21/9; overflow: hidden; }
+  .post__hero img { width: 100%; height: 100%; object-fit: cover; }
+  .post__container { max-width: 42rem; margin: 0 auto; padding: 0 1.5rem; }
+
+  .post__header { text-align: center; margin: -3rem auto 2.5rem; position: relative; }
+  .post__chip {
+    display: inline-block; background: var(--brand-green); color: var(--ink, #0d1b2a);
+    font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 0.3rem 0.75rem; border-radius: 9999px; margin-bottom: 1rem;
+  }
+  .post__title { color: #fff; font-size: clamp(1.9rem, 4vw, 2.8rem); line-height: 1.12; font-weight: 800; margin: 0 0 1.25rem; }
+  .post__byline { display: inline-flex; align-items: center; gap: 0.65rem; }
+  .post__byline img { width: 42px; height: 42px; border-radius: 9999px; object-fit: cover; border: 2px solid var(--brand-green); }
+  .post__byline b { display: block; color: #fff; font-size: 0.9rem; text-align: left; }
+  .post__byline small { color: rgba(255,255,255,0.5); font-size: 0.78rem; }
+
+  .post__body { color: rgba(255,255,255,0.75); font-size: 1.05rem; line-height: 1.75; }
+  .post__body h2 { color: #fff; font-family: Georgia, serif; font-size: 1.6rem; margin: 2.25rem 0 0.75rem; }
+  .post__body h3 { color: #fff; font-family: Georgia, serif; font-size: 1.25rem; margin: 1.75rem 0 0.6rem; }
+  .post__body p { margin: 0 0 1.15rem; }
+  .post__body ul, .post__body ol { margin: 0 0 1.15rem; padding-left: 1.25rem; }
+  .post__body li { margin-bottom: 0.5rem; }
+  .post__body li::marker { color: var(--brand-green); }
+  .post__body strong { color: #fff; }
+  .post__body a { color: var(--brand-green-light); text-decoration: underline; }
+  .post__body blockquote {
+    margin: 1.75rem 0; padding: 1rem 1.5rem;
+    border-left: 3px solid var(--brand-green);
+    background: rgba(124,179,66,0.08);
+    color: #fff; font-family: Georgia, serif; font-size: 1.2rem; font-style: italic;
+    border-radius: 0 0.5rem 0.5rem 0;
+  }
+
+  .post__cta {
+    margin-top: 3rem; text-align: center; padding: 2.5rem;
+    background: var(--slate, #12293f); border: 1px solid rgba(124,179,66,0.3); border-radius: 1.25rem;
+  }
+  .post__cta h3 { color: #fff; font-size: 1.5rem; margin: 0 0 0.4rem; }
+  .post__cta p { color: rgba(255,255,255,0.6); margin: 0 0 1.5rem; }
+  .post__cta-btn {
+    display: inline-block; background: var(--brand-green); color: var(--ink, #0d1b2a);
+    font-weight: 700; padding: 0.85rem 1.8rem; border-radius: 9999px; text-decoration: none;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .post__cta-btn:hover { transform: translateY(-2px); background: var(--brand-green-light); }
+</style>

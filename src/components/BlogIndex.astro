@@ -1,0 +1,130 @@
+---
+// BlogIndex.astro
+// The /blog listing: a featured lead post + a grid of article cards (hero
+// image, category chip, title, excerpt, author, date, read time). Cards lift
+// with a green edge on hover and reveal on scroll. Reads from posts.ts.
+//
+// HOW TO USE:
+//   <BlogIndex />   (uses the shared 6 posts; first is the featured lead)
+
+import { posts as shared, type BlogPost } from '../data/posts';
+
+interface Props { heading?: string; sub?: string; posts?: BlogPost[]; }
+const {
+  heading = 'Window film insights',
+  sub = 'Guides, pricing, and expert advice from our install team.',
+  posts = shared,
+} = Astro.props;
+
+const [lead, ...rest] = posts;
+---
+
+<section class="bli">
+  <div class="bli__head">
+    <h2 class="bli__title font-display">{heading}</h2>
+    <p class="bli__sub">{sub}</p>
+  </div>
+
+  <div class="bli__wrap">
+    <!-- featured lead -->
+    <a class="bli__lead" href={`/blog/${lead.slug}/`}>
+      <div class="bli__lead-img"><img src={lead.hero} alt={lead.title} loading="lazy" /></div>
+      <div class="bli__lead-body">
+        <span class="bli__chip">{lead.category}</span>
+        <h3>{lead.title}</h3>
+        <p class="bli__excerpt">{lead.excerpt}</p>
+        <div class="bli__meta">
+          <img src={lead.author.avatar} alt={lead.author.name} />
+          <span><b>{lead.author.name}</b><small>{lead.date} · {lead.readMins} min read</small></span>
+        </div>
+      </div>
+    </a>
+
+    <!-- grid -->
+    <div class="bli__grid">
+      {rest.map((p, i) => (
+        <a class="bli__card" href={`/blog/${p.slug}/`} style={`--d:${i * 70}ms`}>
+          <div class="bli__card-img"><img src={p.hero} alt={p.title} loading="lazy" /><span class="bli__chip">{p.category}</span></div>
+          <div class="bli__card-body">
+            <h3>{p.title}</h3>
+            <p class="bli__excerpt">{p.excerpt}</p>
+            <div class="bli__meta">
+              <img src={p.author.avatar} alt={p.author.name} />
+              <span><b>{p.author.name}</b><small>{p.date} · {p.readMins} min</small></span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .bli { background: var(--ink, #0d1b2a); padding: 4rem 1.5rem; }
+  .bli__head { max-width: 42rem; margin: 0 auto 2.5rem; text-align: center; }
+  .bli__title { color: #fff; font-size: clamp(1.7rem, 3.5vw, 2.5rem); font-weight: 700; margin: 0 0 0.5rem; }
+  .bli__sub { color: rgba(255,255,255,0.5); margin: 0; }
+  .bli__wrap { max-width: 72rem; margin: 0 auto; }
+
+  .bli__chip {
+    display: inline-block; background: var(--brand-green); color: var(--ink, #0d1b2a);
+    font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 0.25rem 0.65rem; border-radius: 9999px;
+  }
+  .bli__excerpt { color: rgba(255,255,255,0.55); font-size: 0.88rem; line-height: 1.55; }
+  .bli__meta { display: flex; align-items: center; gap: 0.6rem; margin-top: auto; }
+  .bli__meta img { width: 34px; height: 34px; border-radius: 9999px; object-fit: cover; border: 1.5px solid var(--brand-green); }
+  .bli__meta b { display: block; color: #fff; font-size: 0.82rem; }
+  .bli__meta small { color: rgba(255,255,255,0.45); font-size: 0.72rem; }
+
+  /* featured lead */
+  .bli__lead {
+    display: grid; grid-template-columns: 1.15fr 1fr; gap: 0;
+    background: var(--slate, #12293f); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 1.25rem; overflow: hidden; text-decoration: none; margin-bottom: 1.5rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .bli__lead:hover { border-color: rgba(124,179,66,0.5); box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
+  .bli__lead-img { position: relative; min-height: 280px; overflow: hidden; }
+  .bli__lead-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+  .bli__lead:hover .bli__lead-img img { transform: scale(1.05); }
+  .bli__lead-body { display: flex; flex-direction: column; gap: 0.8rem; padding: 2rem; }
+  .bli__lead-body h3 { color: #fff; font-family: Georgia, serif; font-size: 1.6rem; line-height: 1.2; margin: 0; }
+
+  /* grid */
+  .bli__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+  .bli__card {
+    display: flex; flex-direction: column; text-decoration: none;
+    background: var(--slate, #12293f); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1rem; overflow: hidden;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    transition-delay: var(--d, 0ms);
+  }
+  .bli.is-visible .bli__card { opacity: 1; transform: translateY(0); }
+  .bli__card:hover { border-color: rgba(124,179,66,0.5); box-shadow: 0 16px 36px rgba(0,0,0,0.35); transform: translateY(-4px); transition-delay: 0ms; }
+  .bli__card-img { position: relative; aspect-ratio: 16/10; overflow: hidden; }
+  .bli__card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+  .bli__card:hover .bli__card-img img { transform: scale(1.05); }
+  .bli__card-img .bli__chip { position: absolute; top: 0.75rem; left: 0.75rem; }
+  .bli__card-body { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.1rem; flex: 1; }
+  .bli__card-body h3 { color: #fff; font-family: Georgia, serif; font-size: 1.08rem; line-height: 1.3; margin: 0; }
+
+  @media (max-width: 900px) {
+    .bli__lead { grid-template-columns: 1fr; }
+    .bli__lead-img { min-height: 220px; }
+    .bli__grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) { .bli__grid { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) {
+    .bli__card { opacity: 1; transform: none; }
+    .bli__card-img img, .bli__lead-img img { transition: none; }
+  }
+</style>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.bli').forEach((el) => io.observe(el));
+</script>
