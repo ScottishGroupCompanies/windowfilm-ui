@@ -1,0 +1,128 @@
+---
+// AccordionBenefits.astro
+// Split benefits accordion: a list of expandable benefit rows on the left
+// (icon + title, expands to reveal detail) paired with an image on the right
+// that swaps to match the open benefit. On mobile the image sits under the
+// open row. Pure CSS + vanilla JS. Brand palette.
+//
+// HOW TO USE:
+//   <AccordionBenefits />   (defaults to 4 window-film benefits)
+//   items={[{ title, detail, img, icon }]}
+
+interface Item { title: string; detail: string; img: string; icon: string; }
+interface Props { heading?: string; sub?: string; items?: Item[]; }
+
+const ICONS = {
+  energy: '<path d="M13 2 3 14h7l-1 8 10-12h-7z"/>',
+  uv: '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
+  privacy: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+};
+
+const {
+  heading = 'Why window film',
+  sub = 'One professional install, four everyday benefits.',
+  items = [
+    { title: 'Energy savings', detail: 'Rejects up to 80% of solar heat, easing the load on your HVAC. Most clients see lower cooling bills the very first summer.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1782907660/https://res.cloudinary.com/deunehrew/image/fetch/f_webp%2Cq_auto%2Cw_1000/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_175417_997747da-e186-459f-83ee-82d3a284366e.png', icon: ICONS.energy },
+    { title: 'UV protection', detail: 'Blocks 99% of harmful UV rays — the leading cause of fading in floors, furniture, and artwork. Protects your interior and your skin.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1781795412/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_175446_f320deaf-2e71-4adf-917d-371be97bdf92.png', icon: ICONS.uv },
+    { title: 'Privacy', detail: 'See out clearly during the day while keeping prying eyes out. Decorative and frosted options add privacy without blocking light.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1782907661/https://res.cloudinary.com/deunehrew/image/fetch/f_webp%2Cq_auto%2Cw_1000/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_175418_885cb5f7-7d7a-43f9-a1a2-33926a01abc1.png', icon: ICONS.privacy },
+    { title: 'Safety & security', detail: 'Security film holds shattered glass together during storms, accidents, and break-in attempts — buying critical time and protecting people.', img: 'https://res.cloudinary.com/deunehrew/image/fetch/v1782765437/https://res.cloudinary.com/deunehrew/image/fetch/f_webp%2Cfl_awebp%2Cq_auto%2Cw_1000/https://d8j0ntlcm91z4.cloudfront.net/user_39gHIafquScvuUngNf6xPBDD37B/hf_20260615_163225_ef3d64e4-534f-42b3-bc9b-af78ddffac20.png', icon: ICONS.shield },
+  ],
+} = Astro.props;
+---
+
+<section class="accb">
+  <div class="accb__head">
+    <h2 class="accb__title font-display">{heading}</h2>
+    <p class="accb__sub">{sub}</p>
+  </div>
+
+  <div class="accb__wrap">
+    <div class="accb__list">
+      {items.map((item, i) => (
+        <div class={`accb__row ${i === 0 ? 'is-open' : ''}`} data-row data-index={i}>
+          <button class="accb__trigger" data-trigger aria-expanded={i === 0 ? 'true' : 'false'}>
+            <span class="accb__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={item.icon}></svg></span>
+            <span class="accb__row-title">{item.title}</span>
+            <span class="accb__chev" aria-hidden="true">›</span>
+          </button>
+          <div class="accb__detail"><div class="accb__detail-inner">
+            <p>{item.detail}</p>
+            <img class="accb__mobile-img" src={item.img} alt={item.title} loading="lazy" />
+          </div></div>
+        </div>
+      ))}
+    </div>
+
+    <div class="accb__media">
+      {items.map((item, i) => (
+        <img class={`accb__img ${i === 0 ? 'is-active' : ''}`} data-img data-index={i} src={item.img} alt={item.title} loading="lazy" />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .accb { background: var(--ink, #0d1b2a); padding: 4rem 1.5rem; }
+  .accb__head { max-width: 42rem; margin: 0 auto 2.5rem; text-align: center; }
+  .accb__title { color: #fff; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; margin: 0 0 0.5rem; }
+  .accb__sub { color: rgba(255,255,255,0.5); margin: 0; }
+
+  .accb__wrap { max-width: 64rem; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center; }
+  @media (min-width: 900px) { .accb__wrap { grid-template-columns: 1fr 1fr; } }
+
+  .accb__row { border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .accb__trigger {
+    width: 100%; display: flex; align-items: center; gap: 0.9rem;
+    background: none; border: none; cursor: pointer; text-align: left;
+    padding: 1.1rem 0.25rem; color: rgba(255,255,255,0.7); font-family: inherit;
+    transition: color 0.2s;
+  }
+  .accb__row.is-open .accb__trigger { color: #fff; }
+  .accb__icon {
+    flex-shrink: 0; width: 40px; height: 40px; border-radius: 0.6rem;
+    background: rgba(124,179,66,0.15); color: var(--brand-green);
+    display: flex; align-items: center; justify-content: center; transition: background 0.3s, color 0.3s;
+  }
+  .accb__row.is-open .accb__icon { background: var(--brand-green); color: var(--ink, #0d1b2a); }
+  .accb__icon svg { width: 22px; height: 22px; }
+  .accb__row-title { flex: 1; font-family: Georgia, serif; font-size: 1.15rem; font-weight: 600; }
+  .accb__chev { color: var(--brand-green); font-size: 1.3rem; transition: transform 0.3s ease; }
+  .accb__row.is-open .accb__chev { transform: rotate(90deg); }
+
+  .accb__detail { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s ease; }
+  .accb__row.is-open .accb__detail { grid-template-rows: 1fr; }
+  .accb__detail-inner { overflow: hidden; }
+  .accb__detail-inner p { margin: 0 0 1rem; padding: 0 0 0.5rem 3.4rem; color: rgba(255,255,255,0.6); font-size: 0.92rem; line-height: 1.6; }
+  .accb__mobile-img { display: none; }
+
+  .accb__media { position: relative; aspect-ratio: 4/3; border-radius: 1rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+  .accb__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease, transform 0.6s ease; transform: scale(1.04); }
+  .accb__img.is-active { opacity: 1; transform: scale(1); }
+
+  @media (max-width: 899px) {
+    .accb__media { display: none; }
+    .accb__mobile-img { display: block; width: 100%; border-radius: 0.6rem; margin: 0 0 1rem 3.4rem; max-width: calc(100% - 3.4rem); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .accb__detail, .accb__img, .accb__chev, .accb__icon { transition: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.accb').forEach((root) => {
+    const rows = Array.from(root.querySelectorAll<HTMLElement>('[data-row]'));
+    const imgs = Array.from(root.querySelectorAll<HTMLElement>('[data-img]'));
+    rows.forEach((row) => {
+      const trigger = row.querySelector<HTMLElement>('[data-trigger]');
+      trigger?.addEventListener('click', () => {
+        const idx = row.dataset.index;
+        rows.forEach((r) => { r.classList.remove('is-open'); r.querySelector('[data-trigger]')?.setAttribute('aria-expanded', 'false'); });
+        imgs.forEach((im) => im.classList.remove('is-active'));
+        row.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
+        imgs.find((im) => im.dataset.index === idx)?.classList.add('is-active');
+      });
+    });
+  });
+</script>

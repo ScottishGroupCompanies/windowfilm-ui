@@ -47,6 +47,11 @@ import BlogIndex from '../components/BlogIndex.astro';
 import BlogPostCentered from '../components/BlogPostCentered.astro';
 import BlogPostTOC from '../components/BlogPostTOC.astro';
 
+// Accordions
+import AccordionVertical from '../components/AccordionVertical.astro';
+import AccordionFAQ from '../components/AccordionFAQ.astro';
+import AccordionBenefits from '../components/AccordionBenefits.astro';
+
 // Elements
 import HeroVideo from '../components/HeroVideo.astro';
 import HeroSubpage from '../components/HeroSubpage.astro';
@@ -119,6 +124,11 @@ const blogNav = [
   { id: 'blogpostcentered', label: 'Blog — Post (Centered)' },
   { id: 'blogposttoc', label: 'Blog — Post (with TOC)' },
 ];
+const accordionNav = [
+  { id: 'accordionvertical', label: 'Accordion — Vertical Image' },
+  { id: 'accordionfaq', label: 'Accordion — FAQ' },
+  { id: 'accordionbenefits', label: 'Accordion — Benefits' },
+];
 const elementNav = [
   { id: 'herovideo', label: 'Hero Video' },
   { id: 'herosubpage', label: 'Hero Subpage' },
@@ -162,6 +172,7 @@ const ICON = {
   team: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c2.5 0 5 1.7 5 5.5"/>',
   maps: '<path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3zM9 3v15M15 6v15"/>',
   blog: '<path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h5"/>',
+  accordion: '<rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/>',
 };
 
 const categories = [
@@ -174,6 +185,7 @@ const categories = [
   { key: 'team', label: 'Team', icon: ICON.team, items: teamNav },
   { key: 'maps', label: 'Maps', icon: ICON.maps, items: mapNav },
   { key: 'blog', label: 'Blog', icon: ICON.blog, items: blogNav },
+  { key: 'accordions', label: 'Accordions', icon: ICON.accordion, items: accordionNav },
   { key: 'elements', label: 'Elements', icon: ICON.elements, items: elementNav },
   { key: 'animations', label: 'Animations', icon: ICON.animations, items: animationNav },
   { key: 'text', label: 'Text Animations', icon: ICON.text, items: textNav },
@@ -673,6 +685,47 @@ const totalCategories = categories.length;
 </BlogPostTOC>`}
       >
         <BlogPostTOC />
+      </ElementShowcase>
+
+      <h2 data-section-heading class="mb-2 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Accordions</h2>
+      <p data-section-heading class="mb-6 max-w-2xl text-sm text-white/50">
+        Three expandable layouts: a vertical image accordion for services, a classic FAQ (great for SEO),
+        and a split benefits accordion with a swapping image.
+      </p>
+
+      <ElementShowcase
+        title="Accordion — Vertical Image"
+        importAs="AccordionVertical"
+        file="components/AccordionVertical.astro"
+        tall={true}
+        usage="Row of vertical panels; click one and it expands to reveal a full-bleed photo with a description, while the others collapse to labeled spines. Defaults to the 4 service categories with real photos. Stacks vertically on mobile."
+        code={`<AccordionVertical />`}
+      >
+        <AccordionVertical />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Accordion — FAQ"
+        importAs="AccordionFAQ"
+        file="components/AccordionFAQ.astro"
+        usage="Classic FAQ — each question expands smoothly with a rotating +/− icon; one open at a time by default (single={false} to allow many). Ships with 6 real window-film questions. Essential for SEO and handling objections."
+        code={`<AccordionFAQ />
+
+<AccordionFAQ single={false} items={[
+  { q: 'Your question?', a: 'Your answer.' },
+]} />`}
+      >
+        <AccordionFAQ />
+      </ElementShowcase>
+
+      <ElementShowcase
+        title="Accordion — Benefits"
+        importAs="AccordionBenefits"
+        file="components/AccordionBenefits.astro"
+        usage="Split layout: expandable benefit rows on the left (icon + title + detail) paired with an image on the right that swaps to match the open benefit. Defaults to the 4 core film benefits. On mobile the image sits under the open row."
+        code={`<AccordionBenefits />`}
+      >
+        <AccordionBenefits />
       </ElementShowcase>
 
       <h2 data-section-heading class="mb-6 mt-4 font-display text-lg uppercase tracking-wide text-white/40">Elements</h2>
