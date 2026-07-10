@@ -1,34 +1,30 @@
 ---
 // CoveragePinMap.astro
-// A cleaner regional map where location pins DROP in (staggered) over each
-// served city. Hover a pin to raise a tooltip with the city name + a stat.
-// Good for a "Cities We Serve" block. Pure CSS/SVG animation.
+// Regional coverage map using a REAL stylized map image of Greater
+// Philadelphia as the background (navy + green tint, on-brand). Location
+// pins drop in over each served city, name always visible, stat tooltip on
+// hover. The map image lives in public/images. Pure CSS/SVG over the image.
 //
 // HOW TO USE:
 //   <CoveragePinMap />
-//   Each city: { name, stat, x, y } in 0–800 / 0–450 SVG units.
+//   cities are positioned in % (left/top) over the map image, so they stay
+//   put on any width. Tune x/y (0–100) to sit each pin on its real location.
 
 interface City { name: string; stat: string; x: number; y: number; }
-interface Props { heading?: string; sub?: string; cities?: City[]; }
+interface Props { heading?: string; sub?: string; mapSrc?: string; cities?: City[]; }
 const {
   heading = 'Cities we serve',
   sub = 'Certified installers across the Greater Philadelphia region.',
+  mapSrc = '/images/map-philly-green.jpg',
   cities = [
-    { name: 'Philadelphia', stat: '900+ installs', x: 400, y: 235 },
-    { name: 'Main Line', stat: '300+ installs', x: 300, y: 205 },
-    { name: 'Cherry Hill', stat: '180+ installs', x: 500, y: 260 },
-    { name: 'South Jersey', stat: '220+ installs', x: 545, y: 320 },
-    { name: 'Doylestown', stat: '120+ installs', x: 380, y: 120 },
-    { name: 'Wilmington', stat: '140+ installs', x: 250, y: 340 },
+    { name: 'Philadelphia', stat: '900+ installs', x: 50, y: 46 },
+    { name: 'Main Line',     stat: '300+ installs', x: 34, y: 40 },
+    { name: 'Doylestown',    stat: '120+ installs', x: 46, y: 16 },
+    { name: 'Cherry Hill',   stat: '180+ installs', x: 64, y: 48 },
+    { name: 'South Jersey',  stat: '220+ installs', x: 74, y: 66 },
+    { name: 'Wilmington',    stat: '140+ installs', x: 24, y: 74 },
   ],
 } = Astro.props;
-
-const dots: { x: number; y: number }[] = [];
-for (let gx = 20; gx < 800; gx += 24) {
-  for (let gy = 20; gy < 450; gy += 24) {
-    dots.push({ x: gx, y: gy });
-  }
-}
 ---
 
 <section class="cpm">
@@ -38,29 +34,19 @@ for (let gx = 20; gx < 800; gx += 24) {
   </div>
 
   <div class="cpm__map">
-    <svg viewBox="0 0 800 450" class="cpm__svg" role="img" aria-label="Cities we serve">
-      <g class="cpm__dots">
-        {dots.map((d) => <circle cx={d.x} cy={d.y} r="1.4" />)}
-      </g>
+    <img class="cpm__bg" src={mapSrc} alt="Map of the Greater Philadelphia service region" loading="lazy" />
+    <div class="cpm__overlay" aria-hidden="true"></div>
 
-      {cities.map((c, i) => (
-        <g class="cpm__pin" style={`--i:${i}`} tabindex="0">
-          <!-- tooltip -->
-          <g class="cpm__tip" transform={`translate(${c.x}, ${c.y - 46})`}>
-            <rect x="-58" y="-26" width="116" height="40" rx="8" fill="var(--brand-green)" />
-            <text x="0" y="-9" text-anchor="middle" class="cpm__tip-name">{c.name}</text>
-            <text x="0" y="7" text-anchor="middle" class="cpm__tip-stat">{c.stat}</text>
-            <path d="M -6 13 L 6 13 L 0 21 Z" fill="var(--brand-green)" />
-          </g>
-          <!-- teardrop pin -->
-          <path class="cpm__drop"
-            d={`M ${c.x} ${c.y} C ${c.x - 11} ${c.y - 16}, ${c.x - 9} ${c.y - 30}, ${c.x} ${c.y - 30} C ${c.x + 9} ${c.y - 30}, ${c.x + 11} ${c.y - 16}, ${c.x} ${c.y} Z`}
-            fill="var(--brand-green)" stroke="#fff" stroke-width="1.5" />
-          <circle cx={c.x} cy={c.y - 20} r="4" fill="#fff" />
-          <ellipse class="cpm__shadow" cx={c.x} cy={c.y + 4} rx="7" ry="2.5" fill="rgba(0,0,0,0.35)" />
-        </g>
-      ))}
-    </svg>
+    {cities.map((c, i) => (
+      <div class="cpm__pin" style={`--i:${i}; left:${c.x}%; top:${c.y}%;`} tabindex="0">
+        <span class="cpm__tip">{c.stat}</span>
+        <svg class="cpm__marker" width="30" height="38" viewBox="0 0 30 38" fill="none" aria-hidden="true">
+          <path d="M15 37 C15 37 28 22 28 14 A13 13 0 1 0 2 14 C2 22 15 37 15 37 Z" fill="var(--brand-green)" stroke="#fff" stroke-width="2"/>
+          <circle cx="15" cy="14" r="5" fill="#fff"/>
+        </svg>
+        <span class="cpm__city">{c.name}</span>
+      </div>
+    ))}
   </div>
 </section>
 
@@ -69,28 +55,59 @@ for (let gx = 20; gx < 800; gx += 24) {
   .cpm__head { max-width: 42rem; margin: 0 auto 2rem; text-align: center; }
   .cpm__title { color: #fff; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; margin: 0 0 0.5rem; }
   .cpm__sub { color: rgba(255,255,255,0.5); margin: 0; }
-  .cpm__map { max-width: 60rem; margin: 0 auto; }
-  .cpm__svg { width: 100%; height: auto; display: block; }
-  .cpm__dots circle { fill: rgba(255,255,255,0.12); }
 
-  .cpm__pin { cursor: pointer; outline: none; }
-  .cpm__drop, .cpm__pin circle, .cpm__shadow {
-    opacity: 0;
+  .cpm__map {
+    position: relative; max-width: 60rem; margin: 0 auto;
+    border-radius: 1rem; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+    aspect-ratio: 1390 / 780;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+  }
+  .cpm__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .cpm__overlay {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(13,27,42,0.55));
+  }
+
+  .cpm__pin {
+    position: absolute; transform: translate(-50%, -100%);
+    display: flex; flex-direction: column; align-items: center;
+    cursor: pointer; outline: none; z-index: 2;
+  }
+  .cpm__marker {
+    opacity: 0; transform: translateY(-30px);
     animation: cpm-drop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    animation-delay: calc(var(--i) * 0.15s + 0.2s);
-    transform-box: fill-box; transform-origin: center bottom;
+    animation-delay: calc(var(--i) * 0.14s + 0.2s);
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    transition: transform 0.2s ease;
   }
-  @keyframes cpm-drop {
-    0% { opacity: 0; transform: translateY(-40px); }
-    100% { opacity: 1; transform: translateY(0); }
+  .cpm__pin:hover .cpm__marker, .cpm__pin:focus .cpm__marker { transform: scale(1.12); }
+  @keyframes cpm-drop { to { opacity: 1; transform: translateY(0); } }
+
+  .cpm__city {
+    margin-top: 2px; color: #fff; font-size: 0.8rem; font-weight: 600;
+    font-family: system-ui, sans-serif; white-space: nowrap;
+    paint-order: stroke; text-shadow: 0 1px 4px rgba(0,0,0,0.9), 0 0 3px rgba(0,0,0,0.9);
+    opacity: 0; animation: cpm-fade 0.4s ease forwards;
+    animation-delay: calc(var(--i) * 0.14s + 0.7s);
   }
-  .cpm__tip { opacity: 0; transition: opacity 0.25s ease, transform 0.25s ease; transform: translateY(4px); pointer-events: none; }
-  .cpm__pin:hover .cpm__tip, .cpm__pin:focus .cpm__tip { opacity: 1; transform: translateY(0); }
-  .cpm__pin:hover .cpm__drop { filter: drop-shadow(0 4px 10px rgba(124,179,66,0.6)); }
-  .cpm__tip-name { fill: var(--ink, #0d1b2a); font-size: 13px; font-weight: 700; font-family: system-ui, sans-serif; }
-  .cpm__tip-stat { fill: rgba(13,27,42,0.75); font-size: 11px; font-weight: 600; font-family: system-ui, sans-serif; }
+  @keyframes cpm-fade { to { opacity: 1; } }
+
+  .cpm__tip {
+    position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%) translateY(4px);
+    background: var(--brand-green); color: var(--ink, #0d1b2a);
+    font-size: 0.72rem; font-weight: 700; white-space: nowrap;
+    padding: 0.3rem 0.6rem; border-radius: 0.4rem;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  }
+  .cpm__tip::after {
+    content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    border: 5px solid transparent; border-top-color: var(--brand-green);
+  }
+  .cpm__pin:hover .cpm__tip, .cpm__pin:focus .cpm__tip { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   @media (prefers-reduced-motion: reduce) {
-    .cpm__drop, .cpm__pin circle, .cpm__shadow { opacity: 1; animation: none; }
+    .cpm__marker, .cpm__city { opacity: 1; transform: none; animation: none; }
   }
 </style>

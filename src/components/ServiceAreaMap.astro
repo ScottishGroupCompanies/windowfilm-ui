@@ -1,45 +1,37 @@
 ---
 // ServiceAreaMap.astro
-// Dotted regional map (Greater Philadelphia) with animated green arcs that
-// draw from the HQ pin out to each served city, plus pulsing location dots.
-// Inspired by Aceternity's WorldMap but rebuilt with a hand-plotted dot grid
-// and pure SVG animation — no dotted-map lib, no Framer Motion, no theme dep.
+// Coverage map over a REAL stylized map image of Greater Philadelphia.
+// Animated green arcs draw from the HQ out to each served city, with pulsing
+// dots at every point. The map image lives in public/images. Pure SVG/CSS.
 //
 // HOW TO USE:
 //   <ServiceAreaMap />
-//   Cities + HQ are props; coordinates are simple 0–800 / 0–450 SVG units.
+//   hq + cities positioned in % (0–100) over the map image.
 
 interface City { name: string; x: number; y: number; }
 interface Props {
-  heading?: string; sub?: string;
+  heading?: string; sub?: string; mapSrc?: string;
   hq?: { name: string; x: number; y: number };
   cities?: City[];
 }
 const {
   heading = 'Areas we serve',
   sub = 'Serving Philadelphia, the Main Line, Cherry Hill, South Jersey & surrounding areas.',
-  hq = { name: 'Philadelphia HQ', x: 400, y: 235 },
+  mapSrc = '/images/map-philly-green.jpg',
+  hq = { name: 'Philadelphia HQ', x: 50, y: 46 },
   cities = [
-    { name: 'Main Line', x: 300, y: 205 },
-    { name: 'Cherry Hill', x: 500, y: 260 },
-    { name: 'South Jersey', x: 545, y: 320 },
-    { name: 'Doylestown', x: 380, y: 120 },
-    { name: 'Wilmington', x: 250, y: 340 },
+    { name: 'Main Line',    x: 34, y: 40 },
+    { name: 'Doylestown',   x: 46, y: 16 },
+    { name: 'Cherry Hill',  x: 64, y: 48 },
+    { name: 'South Jersey', x: 74, y: 66 },
+    { name: 'Wilmington',   x: 24, y: 74 },
   ],
 } = Astro.props;
 
-// build a diagonal dot grid across the viewBox
-const dots: { x: number; y: number }[] = [];
-for (let gx = 20; gx < 800; gx += 22) {
-  for (let gy = 20; gy < 450; gy += 22) {
-    const off = (Math.floor(gx / 22) % 2) * 11;
-    dots.push({ x: gx, y: gy + off });
-  }
-}
-
+// build a quadratic arc between two %-points in a 0..100 / 0..100 space
 const arc = (a: {x:number;y:number}, b: {x:number;y:number}) => {
   const mx = (a.x + b.x) / 2;
-  const my = Math.min(a.y, b.y) - 55;
+  const my = Math.min(a.y, b.y) - 12;
   return `M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`;
 };
 ---
@@ -51,80 +43,85 @@ const arc = (a: {x:number;y:number}, b: {x:number;y:number}) => {
   </div>
 
   <div class="sam__map">
-    <svg viewBox="0 0 800 450" class="sam__svg" role="img" aria-label="Service area map">
-      <!-- dot grid -->
-      <g class="sam__dots">
-        {dots.map((d) => <circle cx={d.x} cy={d.y} r="1.6" />)}
-      </g>
+    <img class="sam__bg" src={mapSrc} alt="Map of the Greater Philadelphia service region" loading="lazy" />
+    <div class="sam__overlay" aria-hidden="true"></div>
 
+    <svg class="sam__svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
       <defs>
-        <linearGradient id="samArc" x1="0%" y1="0%" x2="100%" y2="0%">
+        <linearGradient id="samArc2" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stop-color="var(--brand-green)" stop-opacity="0" />
-          <stop offset="12%" stop-color="var(--brand-green)" stop-opacity="1" />
-          <stop offset="88%" stop-color="var(--brand-green)" stop-opacity="1" />
+          <stop offset="15%" stop-color="var(--brand-green)" stop-opacity="1" />
+          <stop offset="85%" stop-color="var(--brand-green)" stop-opacity="1" />
           <stop offset="100%" stop-color="var(--brand-green)" stop-opacity="0" />
         </linearGradient>
       </defs>
-
-      <!-- arcs HQ -> city -->
       {cities.map((c, i) => (
-        <path class="sam__arc" style={`--i:${i}`} d={arc(hq, c)} fill="none" stroke="url(#samArc)" stroke-width="2" stroke-linecap="round" />
+        <path class="sam__arc" style={`--i:${i}`} d={arc(hq, c)} fill="none" stroke="url(#samArc2)" stroke-width="0.5" stroke-linecap="round" vector-effect="non-scaling-stroke" />
       ))}
-
-      <!-- city pins -->
-      {cities.map((c) => (
-        <g class="sam__pin">
-          <circle cx={c.x} cy={c.y} r="4" fill="var(--brand-green)" />
-          <circle class="sam__ping" cx={c.x} cy={c.y} r="4" fill="var(--brand-green)" />
-          <text x={c.x} y={c.y - 12} text-anchor="middle" class="sam__label">{c.name}</text>
-        </g>
-      ))}
-
-      <!-- HQ pin (bigger, white ring) -->
-      <g>
-        <circle cx={hq.x} cy={hq.y} r="7" fill="var(--brand-green)" stroke="#fff" stroke-width="2.5" />
-        <circle class="sam__ping" cx={hq.x} cy={hq.y} r="7" fill="var(--brand-green)" />
-        <text x={hq.x} y={hq.y - 16} text-anchor="middle" class="sam__label sam__label--hq">{hq.name}</text>
-      </g>
     </svg>
+
+    <!-- city pins -->
+    {cities.map((c, i) => (
+      <div class="sam__pin" style={`--i:${i}; left:${c.x}%; top:${c.y}%;`}>
+        <span class="sam__dot"></span>
+        <span class="sam__ping"></span>
+        <span class="sam__label">{c.name}</span>
+      </div>
+    ))}
+    <!-- HQ -->
+    <div class="sam__pin sam__pin--hq" style={`left:${hq.x}%; top:${hq.y}%;`}>
+      <span class="sam__dot sam__dot--hq"></span>
+      <span class="sam__ping sam__ping--hq"></span>
+      <span class="sam__label sam__label--hq">{hq.name}</span>
+    </div>
   </div>
 </section>
 
-<style>
+<style is:global>
   .sam { background: var(--ink, #0d1b2a); padding: 4rem 1.5rem; }
   .sam__head { max-width: 42rem; margin: 0 auto 2rem; text-align: center; }
   .sam__title { color: #fff; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; margin: 0 0 0.5rem; }
   .sam__sub { color: rgba(255,255,255,0.5); margin: 0; }
-  .sam__map { max-width: 60rem; margin: 0 auto; }
-  .sam__svg { width: 100%; height: auto; display: block; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent); }
-  .sam__dots circle { fill: rgba(255,255,255,0.18); }
+
+  .sam__map {
+    position: relative; max-width: 60rem; margin: 0 auto;
+    border-radius: 1rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+    aspect-ratio: 1390 / 780; box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+  }
+  .sam__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .sam__overlay { position: absolute; inset: 0; background: rgba(13,27,42,0.35); }
+  .sam__svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
 
   .sam__arc {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: sam-draw 1.4s ease-out forwards;
-    animation-delay: calc(var(--i) * 0.45s + 0.3s);
-    pathLength: 1;
+    stroke-dasharray: 200; stroke-dashoffset: 200;
+    animation: sam-draw 1.5s ease-out forwards;
+    animation-delay: calc(var(--i) * 0.4s + 0.3s);
   }
   @keyframes sam-draw { to { stroke-dashoffset: 0; } }
 
-  .sam__ping { opacity: 0.55; transform-box: fill-box; transform-origin: center; animation: sam-ping 1.8s ease-out infinite; }
-  @keyframes sam-ping { 0% { transform: scale(1); opacity: 0.55; } 70%,100% { transform: scale(3); opacity: 0; } }
-
-  .sam__label { fill: rgba(255,255,255,0.85); font-size: 13px; font-weight: 600; font-family: system-ui, sans-serif; }
-  .sam__label--hq { fill: #fff; font-size: 14px; }
+  .sam__pin { position: absolute; transform: translate(-50%, -50%); z-index: 2; }
+  .sam__dot {
+    display: block; width: 10px; height: 10px; border-radius: 9999px;
+    background: var(--brand-green); border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  }
+  .sam__dot--hq { width: 16px; height: 16px; border-width: 3px; }
+  .sam__ping {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 10px; height: 10px; border-radius: 9999px; background: var(--brand-green);
+    opacity: 0.6; animation: sam-ping 1.8s ease-out infinite;
+  }
+  .sam__ping--hq { width: 16px; height: 16px; }
+  @keyframes sam-ping { 0% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; } 70%,100% { transform: translate(-50%,-50%) scale(3.5); opacity: 0; } }
+  .sam__label {
+    position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+    color: #fff; font-size: 0.75rem; font-weight: 600; white-space: nowrap;
+    font-family: system-ui, sans-serif; text-shadow: 0 1px 4px rgba(0,0,0,0.9), 0 0 3px rgba(0,0,0,0.9);
+  }
+  .sam__label--hq { top: -26px; font-size: 0.85rem; }
 
   @media (prefers-reduced-motion: reduce) {
     .sam__arc { animation: none; stroke-dashoffset: 0; }
     .sam__ping { animation: none; opacity: 0; }
   }
 </style>
-
-<script>
-  // set pathLength-based dash so the stroke draws regardless of arc length
-  document.querySelectorAll<SVGPathElement>('.sam__arc').forEach((p) => {
-    const len = p.getTotalLength();
-    p.style.strokeDasharray = String(len);
-    p.style.strokeDashoffset = String(len);
-  });
-</script>
